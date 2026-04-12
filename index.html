@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DoCSE's AfterParty 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:    #F4ECD8;
+  --parchment:#EDE0C4;
+  --red:      #B8272C;
+  --red-dark: #8B1A1E;
+  --gold:     #C8922A;
+  --navy:     #1A2B3C;
+  --sage:     #6B8F71;
+  --mono:     #3A6B8A;
+  --dust:     #8A7F6E;
+  --ink:      #1A1A2A;
+  --border:   rgba(26,43,60,0.18);
+  --border-strong: rgba(26,43,60,0.7);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── PAPER TEXTURE GRID ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(26,43,60,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(244,236,216,0) 0%,
+    rgba(200,146,42,0.03) 50%,
+    rgba(244,236,216,0) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── LAYOUT ─── */
+.wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 28px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── TOP TICKER ─── */
+.ticker {
+  background: var(--navy);
+  color: var(--cream);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 9px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 10;
+}
+.ticker-inner {
+  display: inline-block;
+  animation: ticker 28s linear infinite;
+}
+@keyframes ticker {
+  from { transform: translateX(100vw); }
+  to   { transform: translateX(-100%); }
+}
+
+/* ─── HERO ─── */
+.hero {
+  padding: 52px 0 44px;
+  text-align: center;
+  border-bottom: 2px solid var(--navy);
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin-bottom: 28px;
+}
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--dust);
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(52px, 10vw, 96px);
+  font-weight: 900;
+  line-height: 0.92;
+  color: var(--navy);
+  letter-spacing: -2px;
+  margin-bottom: 6px;
+}
+
+.hero-title .red { color: var(--red); }
+
+.hero-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 3vw, 26px);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 6px;
+  margin: 10px 0 32px;
+}
+
+.hero-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--red);
+  font-size: 13px;
+  margin-bottom: 36px;
+  opacity: 0.55;
+}
+.hero-ornament span { font-size: 18px; }
+
+/* ─── META BAND ─── */
+.meta-band {
+  display: inline-grid;
+  grid-template-columns: repeat(5, auto);
+  border: 1.5px solid var(--navy);
+  overflow: hidden;
+}
+
+@media (max-width: 680px) {
+  .meta-band {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.meta-cell {
+  padding: 14px 22px;
+  border-right: 1.5px solid var(--navy);
+  text-align: center;
+  min-width: 120px;
+}
+.meta-cell:last-child { border-right: none; }
+.meta-label {
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dust);
+  display: block;
+  margin-bottom: 5px;
+}
+.meta-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+/* ─── SECTION SHARED ─── */
+section {
+  padding: 68px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+
+.sec-tag {
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.sec-tag::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--red);
+  opacity: 0.25;
+}
+
+.sec-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--navy);
+  margin-bottom: 20px;
+}
+
+.sec-body {
+  font-size: 12px;
+  line-height: 2;
+  color: var(--dust);
+  max-width: 580px;
+}
+
+/* ─── ABOUT GRID ─── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1.5px solid var(--navy);
+  margin-top: 44px;
+}
+@media (max-width: 540px) {
+  .about-grid { grid-template-columns: 1fr; }
+}
+
+.about-card {
+  padding: 30px 28px;
+  border-right: 1.5px solid var(--navy);
+  border-bottom: 1.5px solid var(--navy);
+  position: relative;
+  transition: background 0.2s;
+}
+.about-card:hover { background: rgba(26,43,60,0.02); }
+.about-card:nth-child(2n)   { border-right: none; }
+.about-card:nth-child(3),
+.about-card:nth-child(4)    { border-bottom: none; }
+@media (max-width: 540px) {
+  .about-card               { border-right: none !important; }
+  .about-card:last-child    { border-bottom: none !important; }
+  .about-card:nth-child(3)  { border-bottom: 1.5px solid var(--navy) !important; }
+}
+
+.about-num {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--mono);
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.about-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+
+.about-card-text {
+  font-size: 11.5px;
+  color: var(--dust);
+  line-height: 1.85;
+}
+
+/* ─── HIGHLIGHTS ─── */
+.hl-list {
+  list-style: none;
+  border: 1.5px solid var(--navy);
+  margin-top: 44px;
+  overflow: hidden;
+}
+
+.hl-item {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.18s;
+  cursor: default;
+}
+.hl-item:last-child { border-bottom: none; }
+.hl-item:hover { background: rgba(184,39,44,0.04); }
+
+.hl-num {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--red);
+  font-weight: 700;
+  min-width: 30px;
+}
+
+.hl-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  flex: 1;
+  color: var(--navy);
+}
+
+.hl-badge {
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid;
+  color: var(--sage);
+  border-color: var(--sage);
+  white-space: nowrap;
+}
+
+/* ─── SCHEDULE ─── */
+.schedule-placeholder {
+  margin-top: 44px;
+  border: 1.5px dashed rgba(26,43,60,0.22);
+  padding: 56px 32px;
+  text-align: center;
+}
+.sch-icon {
+  font-size: 28px;
+  opacity: 0.2;
+  margin-bottom: 18px;
+}
+.sch-label {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin-bottom: 8px;
+}
+.sch-note {
+  font-size: 11px;
+  color: var(--dust);
+  opacity: 0.7;
+}
+
+/* ─── REGISTER ─── */
+.reg-box {
+  border: 1.5px solid var(--navy);
+  margin-top: 44px;
+  overflow: hidden;
+}
+
+.reg-topbar {
+  background: var(--navy);
+  padding: 14px 26px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+.reg-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+}
+.reg-dot.yellow { background: var(--gold); }
+.reg-dot.green  { background: var(--sage); }
+
+.reg-form {
+  padding: 36px 36px 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.form-row.single { grid-template-columns: 1fr; }
+
+@media (max-width: 560px) {
+  .form-row { grid-template-columns: 1fr; }
+  .reg-form { padding: 24px 22px 0; }
+}
+
+.fgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flabel {
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.finput, .fselect {
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid rgba(26,43,60,0.25);
+  padding: 9px 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 12.5px;
+  color: var(--navy);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.finput::placeholder { color: rgba(26,43,60,0.3); font-size: 11px; }
+.finput:focus, .fselect:focus { border-bottom-color: var(--red); }
+
+.fselect option { color: var(--ink); background: var(--cream); }
+
+.reg-actions {
+  padding: 28px 36px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .reg-actions { padding: 22px 22px 30px; }
+}
+
+.reg-note {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--dust);
+  line-height: 1.7;
+}
+
+.btn-reg {
+  background: var(--red);
+  color: var(--cream);
+  border: none;
+  padding: 14px 38px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+.btn-reg:hover   { background: var(--navy); }
+.btn-reg:active  { transform: scale(0.98); }
+.btn-reg:disabled { background: var(--dust); cursor: not-allowed; }
+
+/* ─── SUCCESS ─── */
+.success-panel {
+  display: none;
+  padding: 60px 36px;
+  text-align: center;
+}
+.success-panel.show { display: block; }
+
+.success-orn { font-size: 24px; color: var(--gold); margin-bottom: 20px; opacity: 0.6; }
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+.success-body {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--dust);
+  line-height: 1.9;
+}
+
+/* ─── QR PAYMENT ─── */
+.qr-section {
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+.qr-header {
+  background: rgba(26,43,60,0.04);
+  padding: 12px 36px;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.qr-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  padding: 28px 36px;
+  align-items: start;
+}
+@media (max-width: 560px) {
+  .qr-body { grid-template-columns: 1fr; }
+  .qr-header { padding: 12px 22px; }
+  .qr-body { padding: 22px; }
+}
+.qr-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.qr-desc {
+  font-size: 11px;
+  color: var(--dust);
+  line-height: 1.8;
+}
+.qr-placeholder {
+  width: 150px;
+  height: 150px;
+  border: 2px dashed rgba(26,43,60,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(26,43,60,0.02);
+  cursor: default;
+}
+.qr-ph-inner { text-align: center; }
+.qr-ph-icon { font-size: 36px; color: var(--dust); opacity: 0.35; margin-bottom: 8px; }
+.qr-ph-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--dust); margin-bottom: 4px; }
+.qr-ph-sub { font-size: 8px; color: var(--dust); opacity: 0.6; letter-spacing: 1px; }
+.qr-img { width: 150px; height: 150px; object-fit: contain; border: 1.5px solid var(--border); }
+
+/* ─── COUNTDOWN ─── */
+.countdown-strip {
+  border: 1.5px solid var(--navy);
+  padding: 24px 28px;
+  margin-top: 18px;
+  text-align: center;
+  background: rgba(26,43,60,0.02);
+}
+.cd-label {
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin-bottom: 18px;
+}
+.cd-units {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border: 1.5px solid var(--border-strong);
+  display: inline-flex;
+}
+.cd-unit {
+  padding: 16px 24px;
+  border-right: 1.5px solid var(--border-strong);
+  min-width: 80px;
+}
+.cd-unit:last-child { border-right: none; }
+.cd-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px;
+  font-weight: 900;
+  color: var(--red);
+  line-height: 1;
+  display: block;
+}
+.cd-name {
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dust);
+  display: block;
+  margin-top: 4px;
+}
+.cd-done {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--sage);
+  padding: 20px;
+}
+@media (max-width: 480px) {
+  .cd-unit { padding: 12px 14px; min-width: 60px; }
+  .cd-num  { font-size: 28px; }
+}
+
+/* ─── NOTICE ─── */
+.notice {
+  border-left: 3px solid var(--gold);
+  padding: 14px 20px;
+  background: rgba(200,146,42,0.06);
+  font-size: 11px;
+  color: var(--dust);
+  line-height: 1.8;
+  margin-top: 20px;
+}
+.notice strong { color: var(--navy); }
+
+/* ─── VENUE ─── */
+.venue-box {
+  border: 1.5px solid var(--navy);
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+@media (max-width: 520px) {
+  .venue-box { grid-template-columns: 1fr; }
+}
+
+.venue-left {
+  padding: 32px 28px;
+  border-right: 1.5px solid var(--navy);
+}
+@media (max-width: 520px) {
+  .venue-left { border-right: none; border-bottom: 1.5px solid var(--navy); }
+}
+
+.venue-right {
+  padding: 32px 28px;
+  background: var(--navy);
+  color: var(--cream);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.venue-tag {
+  font-size: 8px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  opacity: 0.6;
+}
+
+.venue-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.venue-addr {
+  font-size: 11.5px;
+  opacity: 0.7;
+  line-height: 1.8;
+}
+
+.venue-detail {
+  margin-bottom: 16px;
+}
+.venue-detail-key {
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.venue-detail-val {
+  font-size: 12px;
+  color: var(--cream);
+  line-height: 1.7;
+}
+
+/* ─── FUNNY NOTICE ─── */
+.funny-notice-wrap {
+  padding: 68px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.notice-board {
+  border: 2px solid var(--navy);
+  position: relative;
+  overflow: hidden;
+}
+.notice-board-top {
+  background: var(--red);
+  padding: 10px 28px;
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nb-pin {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid rgba(255,255,255,0.4);
+}
+.notice-body {
+  padding: 44px 48px;
+  text-align: center;
+  background: var(--parchment);
+}
+.notice-stamp {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin-bottom: 20px;
+}
+.notice-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 4vw, 36px);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--navy);
+  line-height: 1.4;
+  margin-bottom: 24px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.notice-author {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--red);
+  text-transform: uppercase;
+}
+.notice-footer-strip {
+  background: var(--navy);
+  padding: 10px 28px;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(244,236,216,0.45);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ─── VIDEO ─── */
+.video-section {
+  padding: 68px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.video-wrap {
+  margin-top: 44px;
+  border: 1.5px solid var(--navy);
+  overflow: hidden;
+}
+.video-topbar {
+  background: var(--navy);
+  padding: 13px 24px;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.video-inner {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  background: rgba(26,43,60,0.04);
+}
+.video-placeholder-el {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: 2px dashed rgba(26,43,60,0.14);
+  margin: 24px;
+}
+.vph-icon {
+  font-size: 48px;
+  color: var(--dust);
+  opacity: 0.22;
+}
+.vph-label {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+.vph-sub {
+  font-size: 10px;
+  color: var(--dust);
+  opacity: 0.6;
+  letter-spacing: 1px;
+  text-align: center;
+  max-width: 300px;
+  line-height: 1.8;
+}
+/* When a real video/iframe is added it should fill the inner div */
+.video-inner iframe,
+.video-inner video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+footer {
+  padding: 60px 0;
+  border-top: 2px solid var(--navy);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.footer-dept {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin-bottom: 24px;
+}
+
+.footer-line {
+  width: 40px;
+  height: 2px;
+  background: var(--red);
+  margin: 0 auto 22px;
+}
+
+.footer-info {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dust);
+  line-height: 2;
+}
+
+.footer-credit {
+  margin-top: 32px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(26,43,60,0.3);
+}
+
+/* ─── LOADING OVERLAY ─── */
+#loadOverlay {
+  position: fixed; inset: 0;
+  background: var(--cream);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  transition: opacity 0.4s;
+}
+
+.load-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--navy);
+  letter-spacing: -1px;
+}
+
+.load-sub {
+  font-size: 9px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.load-bar {
+  width: 120px;
+  height: 2px;
+  background: rgba(26,43,60,0.1);
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.load-bar::after {
+  content: '';
+  position: absolute;
+  left: -40%;
+  top: 0; bottom: 0;
+  width: 40%;
+  background: var(--red);
+  animation: loadbar 0.9s ease-in-out forwards;
+}
+@keyframes loadbar {
+  from { left: -40%; }
+  to   { left: 100%; }
+}
+
+/* ─── SCROLL FADE IN ─── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── ERROR STATE ─── */
+.field-error {
+  border-bottom-color: var(--red) !important;
+}
+.error-msg {
+  font-size: 9px;
+  color: var(--red);
+  letter-spacing: 1px;
+  margin-top: 3px;
+}
+
+/* ─── ADMIN PANEL ─── */
+#adminPanel {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(26,27,42,0.92);
+  z-index: 9998;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+#adminPanel.show { display: flex; }
+
+.admin-box {
+  background: var(--cream);
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: auto;
+  border: 2px solid var(--navy);
+}
+
+.admin-header {
+  background: var(--navy);
+  color: var(--cream);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  position: sticky; top: 0;
+}
+
+.admin-close {
+  background: none;
+  border: none;
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.admin-close:hover { opacity: 1; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.admin-table th {
+  background: var(--parchment);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--navy);
+}
+
+.admin-toolbar {
+  padding: 16px 24px;
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-admin {
+  background: var(--navy);
+  color: var(--cream);
+  border: none;
+  padding: 10px 22px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-admin:hover { background: var(--red); }
+.admin-empty {
+  padding: 40px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--dust);
+  letter-spacing: 3px;
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadOverlay">
+  <div class="load-title">DoCSE's AfterParty</div>
+  <div class="load-sub">Kathmandu University · 2026</div>
+  <div class="load-bar"></div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <span class="ticker-inner">
+    ✦ DoCSE's AfterParty 2026 &nbsp;—&nbsp; April 24 · Lotus Palace, Shreekhandapur &nbsp;—&nbsp;
+    Welcoming Freshers · Celebrating Seniors &nbsp;—&nbsp; Department of Computer Science & Engineering, Kathmandu University &nbsp;—&nbsp;
+    Flash Mob · Good Food · Great Vibes &nbsp;—&nbsp; Register Below ✦ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ✦ DoCSE's AfterParty 2026 &nbsp;—&nbsp; April 24 · Lotus Palace, Shreekhandapur &nbsp;—&nbsp;
+    Welcoming Freshers · Celebrating Seniors &nbsp;—&nbsp; Department of Computer Science & Engineering, Kathmandu University &nbsp;—&nbsp;
+    Flash Mob · Good Food · Great Vibes &nbsp;—&nbsp; Register Below ✦
+  </span>
+</div>
+
+<!-- HERO -->
+<div class="hero fade-in">
+  <div class="wrap">
+    <div class="hero-eyebrow">DoCSE · KU · Kathmandu · 2026</div>
+    <h1 class="hero-title">
+      DoCSE's<br><span class="red">After</span>Party
+    </h1>
+    <div class="hero-year">Two Thousand Twenty-Six</div>
+    <div class="hero-ornament">
+      — <span>✦</span> —
+    </div>
+    <div class="meta-band">
+      <div class="meta-cell">
+        <span class="meta-label">Date</span>
+        <span class="meta-value">April 24, 2026</span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-label">Nepali Date</span>
+        <span class="meta-value">Baisakh 11, 2083</span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-label">Time</span>
+        <span class="meta-value">4:00 PM Onwards</span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-label">Venue</span>
+        <span class="meta-value">Lotus Palace</span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-label">Location</span>
+        <span class="meta-value">Shreekhandapur</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="fade-in">
+  <div class="wrap">
+    <div class="sec-tag">01 · About the Evening</div>
+    <h2 class="sec-title">Two generations.<br>One electric evening.</h2>
+    <p class="sec-body">
+      DoCSE's AfterParty 2026 is the night where the Department of Computer Science & Engineering
+      at Kathmandu University comes fully alive — greeting the freshers stepping into their first chapter,
+      and honouring the seniors who built something worth celebrating.
+      One venue. Two stories. Zero dull moments.
+    </p>
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="about-num">// 01</div>
+        <div class="about-card-title">Welcome, Freshers</div>
+        <div class="about-card-text">Your journey in CSE begins here. Meet your seniors, find your people, and feel the culture of DoCSE in one evening.</div>
+      </div>
+      <div class="about-card">
+        <div class="about-num">// 02</div>
+        <div class="about-card-title">Honour the Seniors</div>
+        <div class="about-card-text">Years of late nights, hard problems, and quiet breakthroughs — tonight we celebrate what the seniors have built and who they have become.</div>
+      </div>
+      <div class="about-card">
+        <div class="about-num">// 03</div>
+        <div class="about-card-title">The Department</div>
+        <div class="about-card-text">Computer Science & Engineering, Kathmandu University — a community built on curiosity, craft, and code that runs through everything.</div>
+      </div>
+      <div class="about-card">
+        <div class="about-num">// 04</div>
+        <div class="about-card-title">The Evening</div>
+        <div class="about-card-text">Lotus Palace, Shreekhandapur — the setting is right. The energy will do the rest. Come ready to have a night worth remembering.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HIGHLIGHTS -->
+<section class="fade-in">
+  <div class="wrap">
+    <div class="sec-tag">02 · Programme Highlights</div>
+    <h2 class="sec-title">What's on the evening.</h2>
+    <ul class="hl-list">
+      <li class="hl-item">
+        <span class="hl-num">01 —</span>
+        <span class="hl-name">Flash Mob</span>
+        <span class="hl-badge">Live Performance</span>
+      </li>
+      <li class="hl-item">
+        <span class="hl-num">02 —</span>
+        <span class="hl-name">Good Food & Great Vibes</span>
+        <span class="hl-badge">Dining</span>
+      </li>
+      <li class="hl-item">
+        <span class="hl-num">03 —</span>
+        <span class="hl-name">Senior Achievements Night</span>
+        <span class="hl-badge">Ceremony</span>
+      </li>
+      <li class="hl-item">
+        <span class="hl-num">04 —</span>
+        <span class="hl-name">Fresher Welcome</span>
+        <span class="hl-badge">Community</span>
+      </li>
+      <li class="hl-item">
+        <span class="hl-num">05 —</span>
+        <span class="hl-name">More to be announced…</span>
+        <span class="hl-badge">Upcoming</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section class="fade-in">
+  <div class="wrap">
+    <div class="sec-tag">03 · Schedule</div>
+    <h2 class="sec-title">The evening's order.</h2>
+    <p class="sec-body">The detailed programme will be published as confirmations come in. Check back here for updates.</p>
+    <div class="schedule-placeholder">
+      <div class="sch-icon">◻</div>
+      <div class="sch-label">Schedule to be announced</div>
+      <div class="sch-note">Details will be published here as they are confirmed.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VENUE -->
+<section class="fade-in">
+  <div class="wrap">
+    <div class="sec-tag">04 · Venue</div>
+    <h2 class="sec-title">Where we gather.</h2>
+    <div class="venue-box">
+      <div class="venue-left">
+        <div class="venue-detail">
+          <div class="venue-detail-key">Venue Name</div>
+          <div class="venue-detail-val" style="font-family:'Playfair Display',serif; font-size:20px; color:var(--navy); font-weight:700;">Lotus Palace</div>
+        </div>
+        <div class="venue-detail">
+          <div class="venue-detail-key">Address</div>
+          <div class="venue-detail-val" style="color:var(--dust);">Shreekhandapur, Kathmandu</div>
+        </div>
+        <div class="venue-detail">
+          <div class="venue-detail-key">Event Date</div>
+          <div class="venue-detail-val" style="color:var(--dust);">Thursday, April 24, 2026<br>Baisakh 11, 2083 B.S.</div>
+        </div>
+      </div>
+      <div class="venue-right">
+        <div class="venue-tag">Event Time</div>
+        <div class="venue-name" style="font-size:32px;">4:00 PM</div>
+        <div class="venue-addr" style="margin-bottom:20px;">Onwards · Doors open at 4 PM<br>Come early, stay late.</div>
+        <div class="venue-tag">Getting There</div>
+        <div class="venue-addr">Lotus Palace, Shreekhandapur<br>Kathmandu — accessible by<br>private vehicle or taxi.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section class="fade-in">
+  <div class="wrap">
+    <div class="sec-tag">05 · Registration</div>
+    <h2 class="sec-title">Secure your seat.</h2>
+    <p class="sec-body">Fill in your details below. All registrations are reviewed by the organising team.</p>
+
+    <div class="reg-box">
+      <div class="reg-topbar">
+        <div class="reg-dot"></div>
+        <div class="reg-dot yellow"></div>
+        <div class="reg-dot green"></div>
+        &nbsp; Registration — DoCSE AfterParty 2026
+      </div>
+
+      <div id="formBody">
+        <div class="reg-form">
+          <div class="form-row">
+            <div class="fgroup">
+              <label class="flabel">Full Name *</label>
+              <input type="text" id="f_name" class="finput" placeholder="Your full name">
+            </div>
+            <div class="fgroup">
+              <label class="flabel">Roll Number</label>
+              <input type="text" id="f_roll" class="finput" placeholder="e.g. 23000xx">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fgroup">
+              <label class="flabel">Email Address *</label>
+              <input type="email" id="f_email" class="finput" placeholder="your@email.com">
+            </div>
+            <div class="fgroup">
+              <label class="flabel">Phone Number</label>
+              <input type="tel" id="f_phone" class="finput" placeholder="+977 98XXXXXXXX">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fgroup">
+              <label class="flabel">Batch / Year</label>
+              <select id="f_batch" class="fselect">
+                <option value="">— Select your batch</option>
+                <option>Freshers — 2025 Intake</option>
+                <option>2024 Batch</option>
+                <option>2023 Batch</option>
+                <option>2022 Batch</option>
+                <option>2021 Batch</option>
+                <option>Senior — 2020 & Earlier</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label class="flabel">Programme</label>
+              <select id="f_prog" class="fselect">
+                <option value="">— Select programme</option>
+                <option>B.E. Computer Engineering</option>
+                <option>B.Sc. Computer Science</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="fgroup">
+              <label class="flabel">Dietary Preference (optional)</label>
+              <select id="f_diet" class="fselect">
+                <option value="No preference">No preference</option>
+                <option>Vegetarian</option>
+                <option>Non-Vegetarian</option>
+                <option>Vegan</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAYMENT QR -->
+        <div class="qr-section">
+          <div class="qr-header">
+            <div class="reg-dot"></div>
+            &nbsp; Payment — Scan to Pay
+          </div>
+          <div class="qr-body">
+            <div class="qr-left">
+              <div class="qr-title">eSewa / Mobile Banking</div>
+              <div class="qr-desc">
+                Scan the QR code to pay the registration fee via eSewa, Khalti, or any Nepali mobile banking app.
+                After payment, enter your transaction ID below as confirmation.
+              </div>
+              <div class="fgroup" style="margin-top:18px;">
+                <label class="flabel">Transaction ID / Reference *</label>
+                <input type="text" id="f_txn" class="finput" placeholder="e.g. TXN-XXXXXXXX">
+              </div>
+              <div style="font-size:9px; color:var(--dust); margin-top:8px; letter-spacing:1px;">
+                Your registration is confirmed once payment is verified by the team.
+              </div>
+            </div>
+            <div class="qr-right">
+              <!-- ─── QR PLACEHOLDER ────────────────────────────────────────
+                   TO ADD YOUR QR:
+                   1. Save your eSewa/bank QR image as  qr.png  in the same
+                      folder as index.html
+                   2. Replace the <div class="qr-placeholder"> block below with:
+                      <img src="qr.png" alt="Payment QR" class="qr-img">
+                   See guide.md for full instructions.
+              ──────────────────────────────────────────────────────────── -->
+              <div class="qr-placeholder" id="qrSlot">
+                <div class="qr-ph-inner">
+                  <div class="qr-ph-icon">▦</div>
+                  <div class="qr-ph-label">QR Code</div>
+                  <div class="qr-ph-sub">eSewa · Khalti · mBanking</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reg-actions">
+          <div class="reg-note">
+            * Required fields<br>
+            Registrations reviewed by organising team.
+          </div>
+          <button class="btn-reg" id="submitBtn" onclick="submitForm()">Register Now →</button>
+        </div>
+      </div>
+
+      <div class="success-panel" id="successPanel">
+        <div class="success-orn">✦</div>
+        <div class="success-title">You're on the list.</div>
+        <p class="success-body">
+          Registration confirmed.<br>
+          See you on April 24th at Lotus Palace.
+        </p>
+      </div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-strip">
+      <div class="cd-label">Time until the party begins</div>
+      <div id="cdDisplay">
+        <div class="cd-units">
+          <div class="cd-unit"><span class="cd-num" id="cdDays">--</span><span class="cd-name">Days</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-name">Hours</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-name">Minutes</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-name">Seconds</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup notice -->
+    <div class="notice" id="setupNotice">
+      <strong>⚙ Organiser Setup Required:</strong> To save registrations permanently, connect this form to Google Sheets.
+      Open <strong>setup.md</strong> (included in the download) for the 3-step setup. Until then, registrations are saved locally on each device.
+    </div>
+  </div>
+</section>
+
+<!-- FUNNY NOTICE -->
+<div class="funny-notice-wrap fade-in">
+  <div class="wrap">
+    <div class="notice-board">
+      <div class="notice-board-top">
+        <div class="nb-pin"></div>
+        <div class="nb-pin"></div>
+        Notice Board — From the Organising Committee
+      </div>
+      <div class="notice-body">
+        <div class="notice-stamp">📌 Official Notice · DoCSE AfterParty 2026</div>
+        <div class="notice-quote">
+          "So many things have to be seen to be experienced."
+        </div>
+        <div class="notice-author">— The Organising Committee &nbsp;✦&nbsp; (We mean it. Just come.)</div>
+      </div>
+      <div class="notice-footer-strip">
+        This is a legally non-binding statement. The committee accepts no responsibility for uncontrollable levels of fun.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO -->
+<section class="video-section fade-in">
+  <div class="wrap">
+    <div class="sec-tag">07 · The Vibe</div>
+    <h2 class="sec-title">See it before you feel it.</h2>
+    <p class="sec-body">A glimpse of what's coming. Stay tuned.</p>
+    <div class="video-wrap">
+      <div class="video-topbar">
+        <div class="reg-dot"></div>
+        <div class="reg-dot yellow"></div>
+        <div class="reg-dot green"></div>
+        &nbsp; DoCSE AfterParty 2026 — Official Video
+      </div>
+      <div class="video-inner">
+        <!-- ─── VIDEO PLACEHOLDER ─────────────────────────────────────────
+             TO ADD YOUR VIDEO — Option A (YouTube):
+             Replace the div.video-placeholder-el below with:
+             <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+               allowfullscreen></iframe>
+
+             TO ADD YOUR VIDEO — Option B (local MP4 file):
+             Replace the div.video-placeholder-el below with:
+             <video controls>
+               <source src="your-video.mp4" type="video/mp4">
+             </video>
+
+             See guide.md for full step-by-step instructions.
+        ─────────────────────────────────────────────────────────────── -->
+        <div class="video-placeholder-el">
+          <div class="vph-icon">▶</div>
+          <div class="vph-label">Video Coming Soon</div>
+          <div class="vph-sub">
+            The official DoCSE AfterParty 2026 video will be added here.<br>
+            Check back soon.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-title">DoCSE's AfterParty 2026</div>
+    <div class="footer-dept">Dept. of Computer Science & Engineering · Kathmandu University</div>
+    <div class="footer-line"></div>
+    <div class="footer-info">
+      April 24, 2026 · Baisakh 11, 2083<br>
+      Lotus Palace, Shreekhandapur, Kathmandu
+    </div>
+    <div class="footer-credit">Site by DoCSE Organising Committee — 2026</div>
+  </div>
+</footer>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <div class="admin-box">
+    <div class="admin-header">
+      <span>Registrations — DoCSE AfterParty 2026</span>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div id="adminContent"></div>
+    <div class="admin-toolbar">
+      <button class="btn-admin" onclick="downloadCSV()">↓ Export CSV</button>
+      <button class="btn-admin" onclick="closeAdmin()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── GOOGLE APPS SCRIPT URL ───────────────────────────────────────────────
+   After following setup.md, replace the placeholder below with your Apps
+   Script web app URL. Leave as empty string to use local storage only.
+───────────────────────────────────────────────────────────────────────── */
+const APPS_SCRIPT_URL = '';   // 'https://script.google.com/macros/s/YOUR_ID_HERE/exec'
+
+/* ─── LOCAL STORAGE ─── */
+const STORE_KEY = 'docse_party_2026';
+
+function getRegs() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveReg(entry) {
+  const regs = getRegs();
+  regs.push(entry);
+  localStorage.setItem(STORE_KEY, JSON.stringify(regs));
+}
+
+/* ─── COUNTDOWN TIMER ─── */
+function runCountdown() {
+  // April 24 2026, 4:00 PM Nepal Time (UTC+5:45)
+  const target = new Date('2026-04-24T10:15:00Z'); // 4:00 PM NPT = 10:15 UTC
+
+  function tick() {
+    const now  = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById('cdDisplay').innerHTML =
+        '<div class="cd-done">✦ The Party Has Begun ✦</div>';
+      return;
+    }
+
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000)  / 60000);
+    const secs  = Math.floor((diff % 60000)    / 1000);
+
+    document.getElementById('cdDays').textContent  = String(days).padStart(2,'0');
+    document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cdMins').textContent  = String(mins).padStart(2,'0');
+    document.getElementById('cdSecs').textContent  = String(secs).padStart(2,'0');
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ─── FORM SUBMIT ─── */
+async function submitForm() {
+  const name  = document.getElementById('f_name').value.trim();
+  const roll  = document.getElementById('f_roll').value.trim();
+  const email = document.getElementById('f_email').value.trim();
+  const phone = document.getElementById('f_phone').value.trim();
+  const batch = document.getElementById('f_batch').value;
+  const prog  = document.getElementById('f_prog').value;
+  const diet  = document.getElementById('f_diet').value;
+  const txn   = document.getElementById('f_txn').value.trim();
+
+  if (!name)  { alert('Please enter your full name.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid email address.'); return;
+  }
+  if (!txn) { alert('Please enter your payment transaction ID.'); return; }
+
+  if (getRegs().find(r => r.email.toLowerCase() === email.toLowerCase())) {
+    alert('This email is already registered. If this is an error, contact the organising team.'); return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Registering…';
+  btn.disabled = true;
+
+  const entry = { name, roll, email, phone, batch, prog, diet, txn, ts: new Date().toISOString() };
+
+  saveReg(entry);
+
+  if (APPS_SCRIPT_URL) {
+    try {
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      });
+    } catch(e) { /* silent */ }
+  }
+
+  document.getElementById('formBody').style.display = 'none';
+  document.getElementById('successPanel').classList.add('show');
+}
+
+/* ─── ADMIN (Shift + A) ─── */
+document.addEventListener('keydown', e => {
+  if (e.shiftKey && e.key === 'A') openAdmin();
+  if (e.key === 'Escape') closeAdmin();
+});
+
+function openAdmin() {
+  const regs = getRegs();
+  const panel = document.getElementById('adminPanel');
+  const content = document.getElementById('adminContent');
+
+  if (regs.length === 0) {
+    content.innerHTML = '<div class="admin-empty">No registrations yet.</div>';
+  } else {
+    const rows = regs.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r.name}</td>
+        <td>${r.roll || '—'}</td>
+        <td>${r.email}</td>
+        <td>${r.phone || '—'}</td>
+        <td>${r.batch || '—'}</td>
+        <td>${r.prog || '—'}</td>
+        <td>${r.txn || '—'}</td>
+        <td>${new Date(r.ts).toLocaleDateString()}</td>
+      </tr>`).join('');
+
+    content.innerHTML = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Name</th><th>Roll</th><th>Email</th>
+            <th>Phone</th><th>Batch</th><th>Programme</th><th>TXN ID</th><th>Date</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  panel.classList.add('show');
+}
+
+function closeAdmin() {
+  document.getElementById('adminPanel').classList.remove('show');
+}
+
+function downloadCSV() {
+  const regs = getRegs();
+  if (!regs.length) { alert('No registrations to export.'); return; }
+  const header = 'Timestamp,Name,Roll Number,Email,Phone,Batch,Programme,Diet,Transaction ID';
+  const rows = regs.map(r =>
+    `"${r.ts}","${r.name}","${r.roll}","${r.email}","${r.phone}","${r.batch}","${r.prog}","${r.diet}","${r.txn}"`
+  );
+  const csv = [header, ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'docse_afterparty_2026_registrations.csv';
+  a.click();
+}
+
+/* ─── SCROLL FADE IN ─── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ─── LOADING ─── */
+window.addEventListener('load', () => {
+  runCountdown();
+  setTimeout(() => {
+    const o = document.getElementById('loadOverlay');
+    o.style.opacity = '0';
+    setTimeout(() => o.style.display = 'none', 400);
+  }, 950);
+});
+</script>
+</body>
+</html>
