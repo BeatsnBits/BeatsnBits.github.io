@@ -3,500 +3,649 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DoCSE's AfterParty 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<title>DoCSE :: AFTERPARTY 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Russo+One&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════════════════ */
 :root {
-  --cream:    #F4ECD8;
-  --parchment:#EDE0C4;
-  --red:      #B8272C;
-  --red-dark: #8B1A1E;
-  --gold:     #C8922A;
-  --navy:     #1A2B3C;
-  --sage:     #6B8F71;
-  --mono:     #3A6B8A;
-  --dust:     #8A7F6E;
-  --ink:      #1A1A2A;
-  --border:   rgba(26,43,60,0.18);
-  --border-strong: rgba(26,43,60,0.7);
+  --void:    #040810;
+  --deep:    #070E1C;
+  --surface: #0B1628;
+  --surface2:#0F1E35;
+  --cyan:    #00F5D4;
+  --cyan2:   #00C4AA;
+  --pink:    #FF2D78;
+  --yellow:  #FFD60A;
+  --text:    #7A9EBC;
+  --bright:  #D4EAF7;
+  --white:   #F0F8FF;
+  --border:  rgba(0,245,212,0.15);
+  --glow:    rgba(0,245,212,0.4);
+  --glow-pink: rgba(255,45,120,0.4);
 }
 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-html { scroll-behavior: smooth; }
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 
 body {
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--void);
+  color: var(--bright);
   font-family: 'Space Mono', monospace;
   min-height: 100vh;
   overflow-x: hidden;
+  cursor: crosshair;
 }
 
-/* ─── PAPER TEXTURE GRID ─── */
-body::before {
-  content: '';
+/* ═══════════════════════════════════════════════════════
+   MATRIX CANVAS — behind everything
+═══════════════════════════════════════════════════════ */
+#matrix {
   position: fixed; inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(26,43,60,0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
-  pointer-events: none;
   z-index: 0;
+  opacity: 0.13;
+  pointer-events: none;
 }
 
-body::after {
-  content: '';
+/* ═══════════════════════════════════════════════════════
+   CRT SCANLINES — over everything
+═══════════════════════════════════════════════════════ */
+.scanlines {
   position: fixed; inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(244,236,216,0) 0%,
-    rgba(200,146,42,0.03) 50%,
-    rgba(244,236,216,0) 100%
+  z-index: 9000;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
   );
-  pointer-events: none;
-  z-index: 0;
 }
 
-/* ─── LAYOUT ─── */
-.wrap {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 28px;
-  position: relative;
-  z-index: 1;
+/* ═══════════════════════════════════════════════════════
+   BOOT / LOADING SCREEN
+═══════════════════════════════════════════════════════ */
+#bootScreen {
+  position: fixed; inset: 0;
+  z-index: 9990;
+  background: var(--void);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 80px;
+  transition: opacity 0.6s ease;
 }
+@media(max-width:600px){ #bootScreen { padding: 40px 30px; } }
 
-/* ─── TOP TICKER ─── */
-.ticker {
-  background: var(--navy);
-  color: var(--cream);
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 9px 0;
-  overflow: hidden;
+.boot-line {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  line-height: 2;
+  opacity: 0;
   white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+}
+.boot-line.visible { opacity: 1; }
+.boot-line.ok::after {
+  content: ' [OK]';
+  color: var(--yellow);
+}
+.boot-line.cursor::after {
+  content: '█';
+  animation: blink 0.7s step-end infinite;
+  color: var(--cyan);
+}
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════ */
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
   position: relative;
   z-index: 10;
 }
+
+/* ═══════════════════════════════════════════════════════
+   TOP TICKER
+═══════════════════════════════════════════════════════ */
+.ticker {
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  z-index: 100;
+}
 .ticker-inner {
   display: inline-block;
-  animation: ticker 28s linear infinite;
+  animation: ticker 30s linear infinite;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--cyan);
 }
+.ticker-sep { color: var(--pink); margin: 0 16px; }
 @keyframes ticker {
   from { transform: translateX(100vw); }
   to   { transform: translateX(-100%); }
 }
 
-/* ─── HERO ─── */
+/* ═══════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════ */
 .hero {
-  padding: 52px 0 44px;
-  text-align: center;
-  border-bottom: 2px solid var(--navy);
+  padding: 80px 0 60px;
   position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
 }
 
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 9px;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--dust);
-  margin-bottom: 28px;
+.hero-path {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--text);
+  letter-spacing: 3px;
+  margin-bottom: 32px;
 }
-.hero-eyebrow::before,
-.hero-eyebrow::after {
-  content: '';
-  width: 32px; height: 1px;
-  background: var(--dust);
+.hero-path .p-bracket { color: var(--cyan); }
+.hero-path .p-slash { color: var(--pink); opacity: 0.6; }
+
+.hero-pre {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--pink);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 
 .hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(52px, 10vw, 96px);
-  font-weight: 900;
-  line-height: 0.92;
-  color: var(--navy);
-  letter-spacing: -2px;
-  margin-bottom: 6px;
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(64px, 13vw, 130px);
+  line-height: 0.88;
+  text-transform: uppercase;
+  letter-spacing: -3px;
+  margin-bottom: 12px;
+  position: relative;
+  display: inline-block;
 }
 
-.hero-title .red { color: var(--red); }
-
-.hero-year {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(18px, 3vw, 26px);
-  font-style: italic;
-  font-weight: 300;
-  color: var(--gold);
-  letter-spacing: 6px;
-  margin: 10px 0 32px;
+.hero-title .word-docse {
+  display: block;
+  color: var(--white);
 }
 
-.hero-ornament {
+.hero-title .word-after {
+  display: block;
+  color: var(--cyan);
+  text-shadow:
+    0 0 40px rgba(0,245,212,0.6),
+    0 0 80px rgba(0,245,212,0.2);
+  position: relative;
+}
+
+/* GLITCH on AFTERPARTY */
+.hero-title .word-after::before,
+.hero-title .word-after::after {
+  content: 'AFTER';
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%;
+}
+.hero-title .word-after::before {
+  color: var(--pink);
+  animation: glitch1 4s infinite;
+  clip-path: inset(0 0 0 0);
+  text-shadow: none;
+}
+.hero-title .word-after::after {
+  color: var(--yellow);
+  animation: glitch2 4s infinite;
+  clip-path: inset(0 0 0 0);
+  text-shadow: none;
+}
+
+.hero-title .word-party {
+  display: block;
+  color: var(--white);
+  -webkit-text-stroke: 2px var(--cyan);
+  color: transparent;
+}
+
+@keyframes glitch1 {
+  0%,90%,100% { clip-path: inset(50% 0 50% 0); transform: translateX(0); opacity: 0; }
+  92%  { clip-path: inset(15% 0 70% 0); transform: translateX(-4px); opacity: 0.8; }
+  94%  { clip-path: inset(60% 0 10% 0); transform: translateX(4px);  opacity: 0.8; }
+  96%  { clip-path: inset(30% 0 45% 0); transform: translateX(-4px); opacity: 0.8; }
+  98%  { clip-path: inset(80% 0 5% 0);  transform: translateX(4px);  opacity: 0.8; }
+}
+@keyframes glitch2 {
+  0%,91%,100% { clip-path: inset(50% 0 50% 0); transform: translateX(0); opacity: 0; }
+  92.5%{ clip-path: inset(40% 0 35% 0); transform: translateX(4px); opacity: 0.5; }
+  95%  { clip-path: inset(70% 0 20% 0); transform: translateX(-2px); opacity: 0.5; }
+  97%  { clip-path: inset(10% 0 80% 0); transform: translateX(2px);  opacity: 0.5; }
+  99%  { clip-path: inset(55% 0 5% 0);  transform: translateX(-4px); opacity: 0.5; }
+}
+
+.hero-sub {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--text);
+  letter-spacing: 4px;
+  margin-top: 24px;
+  margin-bottom: 48px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  color: var(--red);
-  font-size: 13px;
-  margin-bottom: 36px;
-  opacity: 0.55;
+  gap: 10px;
 }
-.hero-ornament span { font-size: 18px; }
+.hero-sub .hs-div { color: var(--pink); opacity: 0.5; }
 
-/* ─── META BAND ─── */
-.meta-band {
-  display: inline-grid;
-  grid-template-columns: repeat(5, auto);
-  border: 1.5px solid var(--navy);
-  overflow: hidden;
+/* META GRID */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 30px rgba(0,245,212,0.05);
 }
-
-@media (max-width: 680px) {
-  .meta-band {
-    grid-template-columns: 1fr 1fr;
-  }
-}
+@media(max-width:680px){ .meta-grid { grid-template-columns: 1fr 1fr; } }
 
 .meta-cell {
-  padding: 14px 22px;
-  border-right: 1.5px solid var(--navy);
-  text-align: center;
-  min-width: 120px;
-}
-.meta-cell:last-child { border-right: none; }
-.meta-label {
-  font-size: 8px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--dust);
-  display: block;
-  margin-bottom: 5px;
-}
-.meta-value {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--navy);
-  white-space: nowrap;
-}
-
-/* ─── SECTION SHARED ─── */
-section {
-  padding: 68px 0;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 1;
-}
-
-.sec-tag {
-  font-size: 9px;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--red);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-.sec-tag::after {
-  content: '';
-  flex: 1; height: 1px;
-  background: var(--red);
-  opacity: 0.25;
-}
-
-.sec-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(30px, 5vw, 48px);
-  font-weight: 700;
-  line-height: 1.12;
-  color: var(--navy);
-  margin-bottom: 20px;
-}
-
-.sec-body {
-  font-size: 12px;
-  line-height: 2;
-  color: var(--dust);
-  max-width: 580px;
-}
-
-/* ─── ABOUT GRID ─── */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border: 1.5px solid var(--navy);
-  margin-top: 44px;
-}
-@media (max-width: 540px) {
-  .about-grid { grid-template-columns: 1fr; }
-}
-
-.about-card {
-  padding: 30px 28px;
-  border-right: 1.5px solid var(--navy);
-  border-bottom: 1.5px solid var(--navy);
+  padding: 16px 18px;
+  border-right: 1px solid var(--border);
   position: relative;
   transition: background 0.2s;
 }
-.about-card:hover { background: rgba(26,43,60,0.02); }
-.about-card:nth-child(2n)   { border-right: none; }
-.about-card:nth-child(3),
-.about-card:nth-child(4)    { border-bottom: none; }
-@media (max-width: 540px) {
-  .about-card               { border-right: none !important; }
-  .about-card:last-child    { border-bottom: none !important; }
-  .about-card:nth-child(3)  { border-bottom: 1.5px solid var(--navy) !important; }
-}
+.meta-cell:hover { background: rgba(0,245,212,0.04); }
+.meta-cell:last-child { border-right: none; }
 
-.about-num {
-  font-size: 9px;
+.meta-label {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
   letter-spacing: 3px;
-  color: var(--mono);
-  margin-bottom: 14px;
+  color: var(--pink);
+  display: block;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.meta-val {
+  font-size: 10px;
   font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 1px;
 }
 
-.about-card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 19px;
-  font-weight: 700;
-  color: var(--navy);
+/* ═══════════════════════════════════════════════════════
+   SHARED SECTION STYLES
+═══════════════════════════════════════════════════════ */
+.section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 10;
+}
+
+.sec-path {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  letter-spacing: 3px;
+  color: var(--text);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.sec-path .sp-dim { color: var(--surface2); }
+.sec-path .sp-active { color: var(--cyan); }
+.sec-path .sp-sep { color: var(--pink); }
+
+.sec-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(28px, 5vw, 52px);
+  color: var(--white);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.sec-title .t-accent { color: var(--cyan); }
+.sec-title .t-pink   { color: var(--pink); }
+.sec-title .t-yellow { color: var(--yellow); text-shadow: 0 0 20px rgba(255,214,10,0.3); }
+.sec-title .t-cyan   { color: var(--cyan); }
+
+.sec-body {
+  font-size: 12px;
+  line-height: 2.1;
+  color: var(--text);
+  max-width: 560px;
+}
+
+/* NEON BOX utility */
+.neon-box {
+  border: 1px solid var(--border);
+  background: var(--deep);
+  box-shadow: 0 0 0 rgba(0,245,212,0);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.neon-box:hover {
+  border-color: rgba(0,245,212,0.4);
+  box-shadow: 0 0 20px rgba(0,245,212,0.08), inset 0 0 20px rgba(0,245,212,0.02);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ABOUT GRID
+═══════════════════════════════════════════════════════ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-top: 48px;
+  border: 1px solid var(--border);
+}
+@media(max-width:540px){ .about-grid { grid-template-columns: 1fr; } }
+
+.about-card {
+  background: var(--deep);
+  padding: 32px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+.about-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 0;
+  background: var(--cyan);
+  transition: height 0.3s ease;
+}
+.about-card:hover { background: var(--surface); }
+.about-card:hover::before { height: 100%; }
+
+.ac-num {
+  font-family: 'VT323', monospace;
+  font-size: 42px;
+  color: var(--surface2);
+  line-height: 1;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+.about-card:hover .ac-num { color: rgba(0,245,212,0.2); }
+
+.ac-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 16px;
+  color: var(--white);
+  letter-spacing: 1px;
+  text-transform: uppercase;
   margin-bottom: 10px;
 }
 
-.about-card-text {
-  font-size: 11.5px;
-  color: var(--dust);
-  line-height: 1.85;
+.ac-text {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.9;
 }
 
-/* ─── HIGHLIGHTS ─── */
-.hl-list {
-  list-style: none;
-  border: 1.5px solid var(--navy);
-  margin-top: 44px;
+/* ═══════════════════════════════════════════════════════
+   HIGHLIGHTS / PROGRAMME
+═══════════════════════════════════════════════════════ */
+.hl-table {
+  margin-top: 48px;
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
-.hl-item {
-  display: flex;
+.hl-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
   align-items: center;
-  gap: 22px;
-  padding: 20px 28px;
   border-bottom: 1px solid var(--border);
   transition: background 0.18s;
   cursor: default;
 }
-.hl-item:last-child { border-bottom: none; }
-.hl-item:hover { background: rgba(184,39,44,0.04); }
+.hl-row:last-child { border-bottom: none; }
+.hl-row:hover { background: rgba(0,245,212,0.04); }
 
-.hl-num {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--red);
-  font-weight: 700;
-  min-width: 30px;
-}
-
-.hl-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 19px;
-  font-weight: 700;
-  flex: 1;
-  color: var(--navy);
-}
-
-.hl-badge {
-  font-size: 8px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border: 1px solid;
-  color: var(--sage);
-  border-color: var(--sage);
-  white-space: nowrap;
-}
-
-/* ─── SCHEDULE ─── */
-.schedule-placeholder {
-  margin-top: 44px;
-  border: 1.5px dashed rgba(26,43,60,0.22);
-  padding: 56px 32px;
+.hl-idx {
+  padding: 20px 18px;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--pink);
+  border-right: 1px solid var(--border);
   text-align: center;
 }
-.sch-icon {
-  font-size: 28px;
-  opacity: 0.2;
-  margin-bottom: 18px;
+.hl-name {
+  padding: 20px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bright);
+  letter-spacing: 0.5px;
 }
-.sch-label {
-  font-size: 10px;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--dust);
-  margin-bottom: 8px;
+.hl-badge {
+  margin-right: 20px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  border: 1px solid rgba(0,245,212,0.3);
+  padding: 4px 12px;
+  white-space: nowrap;
 }
-.sch-note {
-  font-size: 11px;
-  color: var(--dust);
-  opacity: 0.7;
+.hl-badge.pink {
+  color: var(--pink);
+  border-color: rgba(255,45,120,0.3);
+}
+.hl-badge.yellow {
+  color: var(--yellow);
+  border-color: rgba(255,214,10,0.3);
 }
 
-/* ─── REGISTER ─── */
-.reg-box {
-  border: 1.5px solid var(--navy);
-  margin-top: 44px;
-  overflow: hidden;
+/* ═══════════════════════════════════════════════════════
+   SCHEDULE
+═══════════════════════════════════════════════════════ */
+.sch-terminal {
+  margin-top: 48px;
+  border: 1px solid var(--border);
+  background: var(--deep);
+}
+.sch-topbar {
+  background: var(--surface);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.sch-dot { width: 9px; height: 9px; border-radius: 50%; }
+.sch-dot.r { background: var(--pink); }
+.sch-dot.y { background: var(--yellow); }
+.sch-dot.g { background: var(--cyan); }
+.sch-topbar-title {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--text);
+  margin-left: 8px;
+}
+.sch-body {
+  padding: 32px 28px;
+}
+.sch-prompt {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.sch-prompt .prompt-sym { color: var(--pink); }
+.sch-output {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--text);
+  line-height: 1.8;
+  margin-left: 24px;
+  margin-bottom: 20px;
+}
+.sch-cursor {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--cyan);
+}
+.sch-cursor::after {
+  content: '█';
+  animation: blink 0.7s step-end infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+   VENUE
+═══════════════════════════════════════════════════════ */
+.venue-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-top: 48px;
+  border: 1px solid var(--border);
+}
+@media(max-width:520px){ .venue-grid { grid-template-columns: 1fr; } }
+
+.venue-left { background: var(--deep); padding: 36px 30px; }
+.venue-right {
+  background: var(--surface);
+  padding: 36px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid var(--border);
+}
+@media(max-width:520px){ .venue-right { border-left: none; border-top: 1px solid var(--border); } }
+
+.v-key {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+.v-val {
+  font-size: 13px;
+  color: var(--bright);
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+.v-val.big {
+  font-family: 'Russo One', sans-serif;
+  font-size: 28px;
+  color: var(--cyan);
+  text-shadow: 0 0 20px rgba(0,245,212,0.4);
+  letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   REGISTRATION
+═══════════════════════════════════════════════════════ */
+.reg-terminal {
+  border: 1px solid var(--border);
+  margin-top: 48px;
+  background: var(--deep);
+  box-shadow: 0 0 60px rgba(0,245,212,0.04);
 }
 
 .reg-topbar {
-  background: var(--navy);
-  padding: 14px 26px;
+  background: var(--surface);
+  padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--cream);
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
 }
-.reg-dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--red);
+.reg-topbar-title {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--text);
+  margin-left: 8px;
 }
-.reg-dot.yellow { background: var(--gold); }
-.reg-dot.green  { background: var(--sage); }
 
-.reg-form {
-  padding: 36px 36px 0;
-}
+.reg-form { padding: 36px 36px 0; }
+@media(max-width:560px){ .reg-form { padding: 22px 20px 0; } }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 28px;
+  margin-bottom: 28px;
 }
 .form-row.single { grid-template-columns: 1fr; }
+@media(max-width:560px){ .form-row { grid-template-columns: 1fr; } }
 
-@media (max-width: 560px) {
-  .form-row { grid-template-columns: 1fr; }
-  .reg-form { padding: 24px 22px 0; }
-}
-
-.fgroup {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.fgroup { display: flex; flex-direction: column; gap: 6px; }
 
 .flabel {
-  font-size: 8px;
+  font-family: 'VT323', monospace;
+  font-size: 15px;
   letter-spacing: 3px;
+  color: var(--pink);
   text-transform: uppercase;
-  color: var(--dust);
 }
+.flabel .req { color: var(--cyan); }
 
 .finput, .fselect {
   background: transparent;
   border: none;
-  border-bottom: 1.5px solid rgba(26,43,60,0.25);
-  padding: 9px 0;
+  border-bottom: 1px solid rgba(0,245,212,0.2);
+  padding: 10px 0 10px 16px;
   font-family: 'Space Mono', monospace;
-  font-size: 12.5px;
-  color: var(--navy);
+  font-size: 12px;
+  color: var(--bright);
   outline: none;
   width: 100%;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, text-shadow 0.2s;
   appearance: none;
   -webkit-appearance: none;
 }
-
-.finput::placeholder { color: rgba(26,43,60,0.3); font-size: 11px; }
-.finput:focus, .fselect:focus { border-bottom-color: var(--red); }
-
-.fselect option { color: var(--ink); background: var(--cream); }
-
-.reg-actions {
-  padding: 28px 36px 36px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-@media (max-width: 560px) {
-  .reg-actions { padding: 22px 22px 30px; }
-}
-
-.reg-note {
-  font-size: 9px;
-  letter-spacing: 1px;
-  color: var(--dust);
-  line-height: 1.7;
-}
-
-.btn-reg {
-  background: var(--red);
-  color: var(--cream);
-  border: none;
-  padding: 14px 38px;
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  white-space: nowrap;
-}
-.btn-reg:hover   { background: var(--navy); }
-.btn-reg:active  { transform: scale(0.98); }
-.btn-reg:disabled { background: var(--dust); cursor: not-allowed; }
-
-/* ─── SUCCESS ─── */
-.success-panel {
-  display: none;
-  padding: 60px 36px;
-  text-align: center;
-}
-.success-panel.show { display: block; }
-
-.success-orn { font-size: 24px; color: var(--gold); margin-bottom: 20px; opacity: 0.6; }
-.success-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  color: var(--navy);
-  margin-bottom: 12px;
-}
-.success-body {
+.finput::placeholder {
+  color: rgba(120,160,190,0.3);
   font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--dust);
-  line-height: 1.9;
 }
+.finput:focus, .fselect:focus {
+  border-bottom-color: var(--cyan);
+  text-shadow: 0 0 8px rgba(0,245,212,0.3);
+}
+.fselect option { background: var(--surface); color: var(--bright); }
 
-/* ─── QR PAYMENT ─── */
+/* QR SECTION */
 .qr-section {
   border-top: 1px solid var(--border);
-  margin-top: 4px;
+  margin-top: 8px;
 }
 .qr-header {
-  background: rgba(26,43,60,0.04);
   padding: 12px 36px;
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--navy);
+  background: var(--surface);
   display: flex;
   align-items: center;
+  gap: 10px;
   border-bottom: 1px solid var(--border);
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--cyan);
 }
 .qr-body {
   display: grid;
@@ -505,430 +654,773 @@ section {
   padding: 28px 36px;
   align-items: start;
 }
-@media (max-width: 560px) {
-  .qr-body { grid-template-columns: 1fr; }
-  .qr-header { padding: 12px 22px; }
-  .qr-body { padding: 22px; }
+@media(max-width:560px){
+  .qr-body { grid-template-columns: 1fr; padding: 22px 20px; }
+  .qr-header { padding: 12px 20px; }
 }
 .qr-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--navy);
+  font-family: 'Russo One', sans-serif;
+  font-size: 15px;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
   margin-bottom: 10px;
 }
 .qr-desc {
   font-size: 11px;
-  color: var(--dust);
-  line-height: 1.8;
+  color: var(--text);
+  line-height: 1.9;
+  margin-bottom: 20px;
 }
 .qr-placeholder {
-  width: 150px;
-  height: 150px;
-  border: 2px dashed rgba(26,43,60,0.25);
+  width: 150px; height: 150px;
+  border: 1px dashed rgba(0,245,212,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: rgba(26,43,60,0.02);
-  cursor: default;
+  background: var(--surface);
+  position: relative;
+}
+.qr-placeholder::before,
+.qr-placeholder::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-color: var(--cyan);
+  border-style: solid;
+}
+.qr-placeholder::before {
+  top: -1px; left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.qr-placeholder::after {
+  bottom: -1px; right: -1px;
+  border-width: 0 2px 2px 0;
 }
 .qr-ph-inner { text-align: center; }
-.qr-ph-icon { font-size: 36px; color: var(--dust); opacity: 0.35; margin-bottom: 8px; }
-.qr-ph-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--dust); margin-bottom: 4px; }
-.qr-ph-sub { font-size: 8px; color: var(--dust); opacity: 0.6; letter-spacing: 1px; }
-.qr-img { width: 150px; height: 150px; object-fit: contain; border: 1.5px solid var(--border); }
-
-/* ─── COUNTDOWN ─── */
-.countdown-strip {
-  border: 1.5px solid var(--navy);
-  padding: 24px 28px;
-  margin-top: 18px;
-  text-align: center;
-  background: rgba(26,43,60,0.02);
-}
-.cd-label {
-  font-size: 9px;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--dust);
-  margin-bottom: 18px;
-}
-.cd-units {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  border: 1.5px solid var(--border-strong);
-  display: inline-flex;
-}
-.cd-unit {
-  padding: 16px 24px;
-  border-right: 1.5px solid var(--border-strong);
-  min-width: 80px;
-}
-.cd-unit:last-child { border-right: none; }
-.cd-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 38px;
-  font-weight: 900;
-  color: var(--red);
-  line-height: 1;
+.qr-ph-icon {
+  font-family: 'VT323', monospace;
+  font-size: 42px;
+  color: rgba(0,245,212,0.2);
   display: block;
-}
-.cd-name {
-  font-size: 8px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--dust);
-  display: block;
-  margin-top: 4px;
-}
-.cd-done {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  color: var(--sage);
-  padding: 20px;
-}
-@media (max-width: 480px) {
-  .cd-unit { padding: 12px 14px; min-width: 60px; }
-  .cd-num  { font-size: 28px; }
-}
-
-/* ─── NOTICE ─── */
-.notice {
-  border-left: 3px solid var(--gold);
-  padding: 14px 20px;
-  background: rgba(200,146,42,0.06);
-  font-size: 11px;
-  color: var(--dust);
-  line-height: 1.8;
-  margin-top: 20px;
-}
-.notice strong { color: var(--navy); }
-
-/* ─── VENUE ─── */
-.venue-box {
-  border: 1.5px solid var(--navy);
-  margin-top: 44px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-}
-@media (max-width: 520px) {
-  .venue-box { grid-template-columns: 1fr; }
-}
-
-.venue-left {
-  padding: 32px 28px;
-  border-right: 1.5px solid var(--navy);
-}
-@media (max-width: 520px) {
-  .venue-left { border-right: none; border-bottom: 1.5px solid var(--navy); }
-}
-
-.venue-right {
-  padding: 32px 28px;
-  background: var(--navy);
-  color: var(--cream);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.venue-tag {
-  font-size: 8px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  opacity: 0.6;
-}
-
-.venue-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  font-weight: 700;
   margin-bottom: 6px;
 }
-.venue-addr {
-  font-size: 11.5px;
-  opacity: 0.7;
-  line-height: 1.8;
+.qr-ph-label {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text);
+  display: block;
 }
+.qr-img { width: 150px; height: 150px; object-fit: contain; }
 
-.venue-detail {
-  margin-bottom: 16px;
+.reg-actions {
+  padding: 24px 36px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-top: 1px solid var(--border);
 }
-.venue-detail-key {
-  font-size: 8px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 4px;
-}
-.venue-detail-val {
-  font-size: 12px;
-  color: var(--cream);
+@media(max-width:560px){ .reg-actions { padding: 20px; } }
+
+.reg-note {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--text);
   line-height: 1.7;
 }
 
-/* ─── FUNNY NOTICE ─── */
-.funny-notice-wrap {
-  padding: 68px 0;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 1;
-}
-.notice-board {
-  border: 2px solid var(--navy);
+.btn-reg {
+  background: transparent;
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  padding: 14px 40px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
   position: relative;
   overflow: hidden;
 }
-.notice-board-top {
-  background: var(--red);
-  padding: 10px 28px;
-  font-size: 9px;
-  letter-spacing: 5px;
+.btn-reg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  transform: translateX(-100%);
+  transition: transform 0.2s;
+  z-index: -1;
+}
+.btn-reg:hover {
+  color: var(--void);
+  box-shadow: 0 0 20px rgba(0,245,212,0.4);
+}
+.btn-reg:hover::before { transform: translateX(0); }
+.btn-reg:active { transform: scale(0.98); }
+.btn-reg:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* SUCCESS */
+.success-panel {
+  display: none;
+  padding: 60px 36px;
+  text-align: center;
+}
+.success-panel.show { display: block; }
+.success-icon {
+  font-family: 'VT323', monospace;
+  font-size: 60px;
+  color: var(--cyan);
+  display: block;
+  margin-bottom: 16px;
+  text-shadow: 0 0 30px rgba(0,245,212,0.6);
+}
+.success-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 28px;
+  color: var(--white);
   text-transform: uppercase;
-  color: var(--cream);
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+}
+.success-body {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+/* COUNTDOWN */
+.countdown-wrap {
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  background: var(--deep);
+  padding: 28px;
+  text-align: center;
+}
+.cd-label {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 5px;
+  color: var(--text);
+  margin-bottom: 20px;
+  display: block;
+  text-transform: uppercase;
+}
+.cd-units {
+  display: inline-flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.cd-unit {
+  background: var(--surface);
+  padding: 18px 24px;
+  min-width: 88px;
+}
+.cd-num {
+  font-family: 'VT323', monospace;
+  font-size: 54px;
+  color: var(--cyan);
+  line-height: 1;
+  display: block;
+  text-shadow: 0 0 20px rgba(0,245,212,0.5);
+}
+.cd-name {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--text);
+  display: block;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+.cd-done {
+  font-family: 'VT323', monospace;
+  font-size: 28px;
+  color: var(--cyan);
+  padding: 20px;
+  text-shadow: 0 0 20px rgba(0,245,212,0.6);
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%,100% { text-shadow: 0 0 10px rgba(0,245,212,0.5); }
+  50%      { text-shadow: 0 0 40px rgba(0,245,212,0.9); }
+}
+@media(max-width:480px){
+  .cd-unit { padding: 14px 16px; min-width: 64px; }
+  .cd-num { font-size: 40px; }
+}
+
+.setup-notice {
+  margin-top: 16px;
+  border-left: 2px solid var(--yellow);
+  padding: 12px 18px;
+  background: rgba(255,214,10,0.04);
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--text);
+  letter-spacing: 1px;
+  line-height: 1.7;
+}
+.setup-notice strong { color: var(--yellow); }
+
+/* ═══════════════════════════════════════════════════════
+   FUNNY NOTICE
+═══════════════════════════════════════════════════════ */
+.notice-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 10;
+}
+.alert-box {
+  border: 1px solid var(--pink);
+  background: var(--deep);
+  box-shadow: 0 0 40px rgba(255,45,120,0.08), inset 0 0 40px rgba(255,45,120,0.02);
+  position: relative;
+  overflow: hidden;
+}
+.alert-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+  animation: scan 2s linear infinite;
+}
+@keyframes scan {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.alert-header {
+  background: var(--pink);
+  padding: 12px 24px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
-.nb-pin {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--gold);
-  border: 2px solid rgba(255,255,255,0.4);
+.alert-icon {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--void);
+  font-weight: bold;
 }
-.notice-body {
-  padding: 44px 48px;
-  text-align: center;
-  background: var(--parchment);
-}
-.notice-stamp {
-  font-size: 9px;
+.alert-title {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
   letter-spacing: 4px;
+  color: var(--void);
   text-transform: uppercase;
-  color: var(--dust);
+}
+.alert-body {
+  padding: 48px 40px;
+  text-align: center;
+}
+.alert-stamp {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  letter-spacing: 4px;
+  color: var(--text);
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+.alert-quote {
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(20px, 4vw, 34px);
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.3;
   margin-bottom: 20px;
 }
-.notice-quote {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(22px, 4vw, 36px);
-  font-style: italic;
-  font-weight: 400;
-  color: var(--navy);
-  line-height: 1.4;
-  margin-bottom: 24px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.notice-author {
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: var(--red);
-  text-transform: uppercase;
-}
-.notice-footer-strip {
-  background: var(--navy);
-  padding: 10px 28px;
-  font-size: 9px;
+.alert-quote .aq-accent { color: var(--pink); }
+.alert-attribution {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
   letter-spacing: 3px;
-  color: rgba(244,236,216,0.45);
+  color: var(--cyan);
+}
+.alert-footer {
+  border-top: 1px solid rgba(255,45,120,0.2);
+  padding: 14px 24px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: rgba(255,45,120,0.5);
   text-align: center;
   text-transform: uppercase;
 }
 
-/* ─── VIDEO ─── */
-.video-section {
-  padding: 68px 0;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 1;
-}
-.video-wrap {
-  margin-top: 44px;
-  border: 1.5px solid var(--navy);
+/* ═══════════════════════════════════════════════════════
+   VIDEO
+═══════════════════════════════════════════════════════ */
+.video-outer {
+  border: 1px solid var(--border);
+  margin-top: 48px;
+  background: var(--deep);
   overflow: hidden;
 }
 .video-topbar {
-  background: var(--navy);
-  padding: 13px 24px;
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--cream);
+  background: var(--surface);
+  padding: 11px 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  letter-spacing: 3px;
+  color: var(--text);
 }
 .video-inner {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 */
-  background: rgba(26,43,60,0.04);
+  padding-bottom: 56.25%;
+  background: #020508;
 }
-.video-placeholder-el {
+.video-ph {
   position: absolute; inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  border: 2px dashed rgba(26,43,60,0.14);
-  margin: 24px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px;
 }
-.vph-icon {
-  font-size: 48px;
-  color: var(--dust);
-  opacity: 0.22;
+.video-ph-ring {
+  width: 80px; height: 80px;
+  border: 2px solid rgba(0,245,212,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
 }
-.vph-label {
-  font-size: 10px;
-  letter-spacing: 5px;
+.video-ph-ring::before {
+  content: '';
+  position: absolute; inset: 6px;
+  border: 1px solid rgba(0,245,212,0.08);
+  border-radius: 50%;
+}
+.video-ph-play {
+  font-family: 'VT323', monospace;
+  font-size: 36px;
+  color: rgba(0,245,212,0.2);
+  margin-left: 4px;
+}
+.video-ph-label {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  letter-spacing: 4px;
+  color: var(--text);
   text-transform: uppercase;
-  color: var(--dust);
+  opacity: 0.5;
 }
-.vph-sub {
+.video-ph-sub {
   font-size: 10px;
-  color: var(--dust);
-  opacity: 0.6;
-  letter-spacing: 1px;
+  color: var(--text);
+  letter-spacing: 2px;
+  opacity: 0.4;
   text-align: center;
-  max-width: 300px;
   line-height: 1.8;
 }
-/* When a real video/iframe is added it should fill the inner div */
 .video-inner iframe,
 .video-inner video {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   border: none;
 }
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
 footer {
   padding: 60px 0;
-  border-top: 2px solid var(--navy);
-  text-align: center;
   position: relative;
-  z-index: 1;
+  z-index: 10;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-logo {
+  font-family: 'Russo One', sans-serif;
+  font-size: 22px;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.footer-line {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  margin: 16px auto;
+}
+.footer-info {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: var(--text);
+  line-height: 2;
+}
+.footer-credit {
+  margin-top: 24px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(122,158,188,0.3);
 }
 
-.footer-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--navy);
+/* ═══════════════════════════════════════════════════════
+   TICKET PRICING
+═══════════════════════════════════════════════════════ */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-top: 48px;
+  border: 1px solid var(--border);
+}
+@media(max-width:540px){ .pricing-grid { grid-template-columns: 1fr; } }
+
+.ticket-card {
+  background: var(--deep);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+.ticket-card.active {
+  background: var(--surface);
+  border: 1px solid var(--cyan);
+  box-shadow: 0 0 40px rgba(0,245,212,0.07), inset 0 0 30px rgba(0,245,212,0.03);
+  margin: -1px;
+}
+.ticket-card.inactive {
+  opacity: 0.45;
+  filter: grayscale(0.4);
+}
+
+.ticket-badge {
+  display: inline-block;
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  letter-spacing: 3px;
+  padding: 4px 12px;
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.ticket-badge.pink {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+.ticket-badge.live {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%,100% { box-shadow: 0 0 0 rgba(0,245,212,0); }
+  50%      { box-shadow: 0 0 12px rgba(0,245,212,0.35); }
+}
+
+.ticket-name {
+  font-family: 'Russo One', sans-serif;
+  font-size: 22px;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
   margin-bottom: 6px;
 }
 
-.footer-dept {
-  font-size: 9px;
-  letter-spacing: 4px;
+.ticket-price {
+  font-family: 'VT323', monospace;
+  font-size: 64px;
+  color: var(--cyan);
+  line-height: 1;
+  text-shadow: 0 0 24px rgba(0,245,212,0.4);
+  margin-bottom: 4px;
+}
+.ticket-price.pink-price {
+  color: var(--pink);
+  text-shadow: 0 0 24px rgba(255,45,120,0.4);
+}
+
+.ticket-currency {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  display: block;
+}
+
+.ticket-desc {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.9;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 8px;
+}
+
+.ticket-active-label {
+  position: absolute;
+  top: 0; right: 0;
+  background: var(--cyan);
+  color: var(--void);
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 4px 14px;
   text-transform: uppercase;
-  color: var(--dust);
-  margin-bottom: 24px;
 }
 
-.footer-line {
-  width: 40px;
-  height: 2px;
-  background: var(--red);
-  margin: 0 auto 22px;
-}
-
-.footer-info {
-  font-size: 10px;
+.pricing-note {
+  margin-top: 16px;
+  font-family: 'VT323', monospace;
+  font-size: 15px;
   letter-spacing: 2px;
-  color: var(--dust);
-  line-height: 2;
+  color: var(--text);
+  line-height: 1.8;
+  border-left: 2px solid rgba(0,245,212,0.2);
+  padding-left: 16px;
 }
 
-.footer-credit {
-  margin-top: 32px;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: rgba(26,43,60,0.3);
+/* ═══════════════════════════════════════════════════════
+   CHECKERS
+═══════════════════════════════════════════════════════ */
+.checker-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  user-select: none;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
 }
-
-/* ─── LOADING OVERLAY ─── */
-#loadOverlay {
-  position: fixed; inset: 0;
-  background: var(--cream);
-  z-index: 9999;
+.checker-row:hover {
+  border-color: rgba(0,245,212,0.25);
+  background: rgba(0,245,212,0.03);
+}
+.checker-row input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
+.checker-box {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 1px solid rgba(0,245,212,0.3);
+  background: var(--deep);
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 1px;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--void);
+}
+.checker-row input:checked ~ .checker-box {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(0,245,212,0.4);
+  color: var(--void);
+}
+.checker-row input:checked ~ .checker-box::after {
+  content: '✓';
+}
+.checker-row.shake {
+  animation: shake 0.4s ease;
+  border-color: var(--pink) !important;
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.checker-text {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.8;
+  letter-spacing: 0.3px;
+}
+.checker-link {
+  color: var(--cyan);
+  text-decoration: underline;
+  cursor: pointer;
+  text-underline-offset: 2px;
+}
+.checker-link:hover { color: var(--white); }
+
+.btn-reg:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.btn-reg:not(:disabled) {
+  pointer-events: all;
+}
+
+/* ═══════════════════════════════════════════════════════
+   T&C MODAL
+═══════════════════════════════════════════════════════ */
+#tncModal {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(4,8,16,0.96);
+  z-index: 9997;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+#tncModal.show { display: flex; }
+
+.tnc-box {
+  background: var(--deep);
+  border: 1px solid var(--border);
+  max-width: 660px; width: 100%;
+  max-height: 85vh;
+  display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: opacity 0.4s;
+  box-shadow: 0 0 60px rgba(0,245,212,0.08);
 }
-
-.load-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--navy);
-  letter-spacing: -1px;
+.tnc-header {
+  background: var(--surface);
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
-
-.load-sub {
-  font-size: 9px;
-  letter-spacing: 5px;
+.tnc-header-title {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: var(--cyan);
   text-transform: uppercase;
-  color: var(--dust);
+}
+.tnc-close {
+  background: none; border: none;
+  color: var(--text); cursor: pointer;
+  font-size: 18px; opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.tnc-close:hover { opacity: 1; color: var(--pink); }
+
+.tnc-body {
+  padding: 32px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+.tnc-section {
+  margin-bottom: 28px;
+}
+.tnc-section-title {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  letter-spacing: 3px;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tnc-section-title::before {
+  content: '//';
+  color: rgba(255,45,120,0.4);
+}
+.tnc-section p, .tnc-section li {
+  font-size: 11.5px;
+  color: var(--text);
+  line-height: 2;
+  letter-spacing: 0.3px;
+}
+.tnc-section ul {
+  list-style: none;
+  padding: 0;
+}
+.tnc-section li::before {
+  content: '> ';
+  color: var(--cyan);
+  opacity: 0.5;
+}
+.tnc-section .highlight {
+  color: var(--yellow);
 }
 
-.load-bar {
-  width: 120px;
-  height: 2px;
-  background: rgba(26,43,60,0.1);
-  margin-top: 8px;
+.tnc-progress-wrap {
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.tnc-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(0,245,212,0.1);
   position: relative;
   overflow: hidden;
 }
-.load-bar::after {
+.tnc-progress-bar::after {
   content: '';
   position: absolute;
-  left: -40%;
-  top: 0; bottom: 0;
-  width: 40%;
-  background: var(--red);
-  animation: loadbar 0.9s ease-in-out forwards;
+  left: 0; top: 0; bottom: 0;
+  width: var(--prog, 0%);
+  background: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,245,212,0.6);
+  transition: width 0.2s ease;
 }
-@keyframes loadbar {
-  from { left: -40%; }
-  to   { left: 100%; }
+.tnc-progress-label {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text);
+  white-space: nowrap;
+  min-width: 120px;
+  text-align: right;
+}
+.tnc-progress-label.done { color: var(--cyan); }
+
+.tnc-timer-msg {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--yellow);
+  flex: 1;
 }
 
-/* ─── SCROLL FADE IN ─── */
-.fade-in {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-.fade-in.visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* ─── ERROR STATE ─── */
-.field-error {
-  border-bottom-color: var(--red) !important;
-}
-.error-msg {
-  font-size: 9px;
-  color: var(--red);
-  letter-spacing: 1px;
-  margin-top: 3px;
+.tnc-footer {
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  background: var(--deep);
 }
 
-/* ─── ADMIN PANEL ─── */
+/* ═══════════════════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════════════════ */
 #adminPanel {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(26,27,42,0.92);
-  z-index: 9998;
+  background: rgba(4,8,16,0.95);
+  z-index: 9995;
   align-items: center;
   justify-content: center;
   padding: 24px;
@@ -936,304 +1428,406 @@ footer {
 #adminPanel.show { display: flex; }
 
 .admin-box {
-  background: var(--cream);
-  max-width: 700px;
-  width: 100%;
-  max-height: 80vh;
-  overflow: auto;
-  border: 2px solid var(--navy);
+  background: var(--deep);
+  border: 1px solid var(--border);
+  max-width: 780px; width: 100%;
+  max-height: 82vh; overflow: auto;
+  box-shadow: 0 0 60px rgba(0,245,212,0.1);
 }
-
 .admin-header {
-  background: var(--navy);
-  color: var(--cream);
-  padding: 16px 24px;
+  background: var(--surface);
+  padding: 14px 22px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 9px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  border-bottom: 1px solid var(--border);
   position: sticky; top: 0;
 }
-
 .admin-close {
-  background: none;
-  border: none;
-  color: var(--cream);
-  cursor: pointer;
-  font-size: 16px;
-  opacity: 0.6;
+  background: none; border: none;
+  color: var(--text); cursor: pointer;
+  font-size: 18px; opacity: 0.6;
   transition: opacity 0.2s;
 }
-.admin-close:hover { opacity: 1; }
+.admin-close:hover { opacity: 1; color: var(--pink); }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
 }
-
 .admin-table th {
-  background: var(--parchment);
+  background: var(--surface);
   padding: 10px 14px;
   text-align: left;
-  font-size: 8px;
+  font-family: 'VT323', monospace;
+  font-size: 13px;
   letter-spacing: 2px;
-  text-transform: uppercase;
+  color: var(--pink);
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
-
 .admin-table td {
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--bright);
+  font-size: 11px;
 }
 
 .admin-toolbar {
-  padding: 16px 24px;
+  padding: 16px 22px;
   display: flex;
   gap: 12px;
   border-top: 1px solid var(--border);
+  background: var(--deep);
+  position: sticky; bottom: 0;
+}
+.btn-admin {
+  background: transparent;
+  color: var(--cyan);
+  border: 1px solid rgba(0,245,212,0.3);
+  padding: 8px 22px;
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-admin:hover {
+  background: var(--cyan);
+  color: var(--void);
+}
+.admin-empty {
+  padding: 50px;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: 3px;
 }
 
-.btn-admin {
-  background: var(--navy);
-  color: var(--cream);
-  border: none;
-  padding: 10px 22px;
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
+/* ═══════════════════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.btn-admin:hover { background: var(--red); }
-.admin-empty {
-  padding: 40px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--dust);
-  letter-spacing: 3px;
+.reveal.on {
+  opacity: 1;
+  transform: none;
 }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loadOverlay">
-  <div class="load-title">DoCSE's AfterParty</div>
-  <div class="load-sub">Kathmandu University · 2026</div>
-  <div class="load-bar"></div>
+<!-- MATRIX CANVAS -->
+<canvas id="matrix"></canvas>
+<!-- CRT OVERLAY -->
+<div class="scanlines"></div>
+
+<!-- ════════════════════════════════════ BOOT SCREEN -->
+<div id="bootScreen">
+  <div class="boot-line" id="b0">&gt; DOCSE_SYSTEMS v2026.04.24</div>
+  <div class="boot-line" id="b1">&gt; LOADING event_data.json ............</div>
+  <div class="boot-line ok" id="b2">&gt; VERIFYING ATTENDEE_SLOTS [400]</div>
+  <div class="boot-line ok" id="b3">&gt; ESTABLISHING SECURE CONNECTION</div>
+  <div class="boot-line ok" id="b4">&gt; LOTUS_PALACE.venue ............... CONFIRMED</div>
+  <div class="boot-line" id="b5" style="color:var(--pink);">&gt; INITIATING PARTY SEQUENCE</div>
+  <div class="boot-line" id="b6" style="color:var(--white); font-size:28px;">&gt; ACCESS GRANTED. WELCOME.</div>
 </div>
 
-<!-- TICKER -->
+<!-- ════════════════════════════════════ TICKER -->
 <div class="ticker">
   <span class="ticker-inner">
-    ✦ DoCSE's AfterParty 2026 &nbsp;—&nbsp; April 24 · Lotus Palace, Shreekhandapur &nbsp;—&nbsp;
-    Welcoming Freshers · Celebrating Seniors &nbsp;—&nbsp; Department of Computer Science & Engineering, Kathmandu University &nbsp;—&nbsp;
-    Flash Mob · Good Food · Great Vibes &nbsp;—&nbsp; Register Below ✦ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    ✦ DoCSE's AfterParty 2026 &nbsp;—&nbsp; April 24 · Lotus Palace, Shreekhandapur &nbsp;—&nbsp;
-    Welcoming Freshers · Celebrating Seniors &nbsp;—&nbsp; Department of Computer Science & Engineering, Kathmandu University &nbsp;—&nbsp;
-    Flash Mob · Good Food · Great Vibes &nbsp;—&nbsp; Register Below ✦
+    DoCSE's AFTERPARTY 2026
+    <span class="ticker-sep">///</span>
+    APRIL 30 · BAISAKH 17 · 4:00 PM
+    <span class="ticker-sep">///</span>
+    LOTUS PALACE · SHREEKHANDAPUR
+    <span class="ticker-sep">///</span>
+    LIVE MUSIC · DJ SHOW · LIVE DRINKS
+    <span class="ticker-sep">///</span>
+    EARLY BIRD Rs.350 · GET IN NOW
+    <span class="ticker-sep">///</span>
+    FRESHERS WELCOME · SENIORS CELEBRATED
+    <span class="ticker-sep">///</span>
+    400 SLOTS ONLY
+    <span class="ticker-sep">///</span>
+    DoCSE's AFTERPARTY 2026
+    <span class="ticker-sep">///</span>
+    APRIL 30 · BAISAKH 17 · 4:00 PM
+    <span class="ticker-sep">///</span>
+    LOTUS PALACE · SHREEKHANDAPUR
+    <span class="ticker-sep">///</span>
+    LIVE MUSIC · DJ SHOW · LIVE DRINKS
+    <span class="ticker-sep">///</span>
+    EARLY BIRD Rs.350 · GET IN NOW
+    <span class="ticker-sep">///</span>
   </span>
 </div>
 
-<!-- HERO -->
-<div class="hero fade-in">
+<!-- ════════════════════════════════════ HERO -->
+<div class="hero reveal">
   <div class="wrap">
-    <div class="hero-eyebrow">DoCSE · KU · Kathmandu · 2026</div>
-    <h1 class="hero-title">
-      DoCSE's<br><span class="red">After</span>Party
-    </h1>
-    <div class="hero-year">Two Thousand Twenty-Six</div>
-    <div class="hero-ornament">
-      — <span>✦</span> —
+    <div class="hero-path">
+      <span class="p-bracket">[</span>
+      <span class="p-slash"> sys </span>
+      <span class="p-bracket">→</span>
+      <span class="p-slash"> events </span>
+      <span class="p-bracket">→</span>
+      <span class="p-slash"> DoCSE </span>
+      <span class="p-bracket">→</span>
+      <span class="p-slash"> afterparty_2026 </span>
+      <span class="p-bracket">]</span>
     </div>
-    <div class="meta-band">
+    <div class="hero-pre">// Department of CSE presents</div>
+    <h1 class="hero-title">
+      <span class="word-docse">DoCSE's</span>
+      <span class="word-after">AFTER</span>
+      <span class="word-party">PARTY</span>
+    </h1>
+    <div class="hero-sub">
+      Two Thousand Twenty-Six
+      <span class="hs-div">/</span>
+      Kathmandu
+    </div>
+    <div class="meta-grid">
       <div class="meta-cell">
-        <span class="meta-label">Date</span>
-        <span class="meta-value">April 24, 2026</span>
+        <span class="meta-label">&gt; DATE</span>
+        <span class="meta-val">APR 30, 2026</span>
       </div>
       <div class="meta-cell">
-        <span class="meta-label">Nepali Date</span>
-        <span class="meta-value">Baisakh 11, 2083</span>
+        <span class="meta-label">&gt; NPT</span>
+        <span class="meta-val">BAISAKH 17</span>
       </div>
       <div class="meta-cell">
-        <span class="meta-label">Time</span>
-        <span class="meta-value">4:00 PM Onwards</span>
+        <span class="meta-label">&gt; TIME</span>
+        <span class="meta-val">16:00 HRS+</span>
       </div>
       <div class="meta-cell">
-        <span class="meta-label">Venue</span>
-        <span class="meta-value">Lotus Palace</span>
+        <span class="meta-label">&gt; VENUE</span>
+        <span class="meta-val">LOTUS PALACE</span>
       </div>
       <div class="meta-cell">
-        <span class="meta-label">Location</span>
-        <span class="meta-value">Shreekhandapur</span>
+        <span class="meta-label">&gt; LOC</span>
+        <span class="meta-val">SHREEKHANDAPUR</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ABOUT -->
-<section class="fade-in">
+<!-- ════════════════════════════════════ ABOUT -->
+<div class="section reveal">
   <div class="wrap">
-    <div class="sec-tag">01 · About the Evening</div>
-    <h2 class="sec-title">Two generations.<br>One electric evening.</h2>
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;01_ABOUT</span>
+    </div>
+    <h2 class="sec-title">honestly,<br><span class="t-accent">just show up.</span></h2>
     <p class="sec-body">
-      DoCSE's AfterParty 2026 is the night where the Department of Computer Science & Engineering
-      at Kathmandu University comes fully alive — greeting the freshers stepping into their first chapter,
-      and honouring the seniors who built something worth celebrating.
-      One venue. Two stories. Zero dull moments.
+      DoCSE's AfterParty 2026. Freshers getting their first real taste of what this
+      department actually feels like outside a classroom. Seniors getting the send-off
+      they actually earned. One night, Lotus Palace, no boring bits.
+      That's the whole pitch.
     </p>
     <div class="about-grid">
       <div class="about-card">
-        <div class="about-num">// 01</div>
-        <div class="about-card-title">Welcome, Freshers</div>
-        <div class="about-card-text">Your journey in CSE begins here. Meet your seniors, find your people, and feel the culture of DoCSE in one evening.</div>
+        <div class="ac-num">01</div>
+        <div class="ac-title">hey freshers 👋</div>
+        <div class="ac-text">You just got into one of the better CSE departments in Nepal. Come meet the people who survived it before you. We don't bite. Much.</div>
       </div>
       <div class="about-card">
-        <div class="about-num">// 02</div>
-        <div class="about-card-title">Honour the Seniors</div>
-        <div class="about-card-text">Years of late nights, hard problems, and quiet breakthroughs — tonight we celebrate what the seniors have built and who they have become.</div>
+        <div class="ac-num">02</div>
+        <div class="ac-title">for the seniors</div>
+        <div class="ac-text">You sat through the exams, the projects, the chaos. Tonight's your night. We're not letting you leave quietly.</div>
       </div>
       <div class="about-card">
-        <div class="about-num">// 03</div>
-        <div class="about-card-title">The Department</div>
-        <div class="about-card-text">Computer Science & Engineering, Kathmandu University — a community built on curiosity, craft, and code that runs through everything.</div>
+        <div class="ac-num">03</div>
+        <div class="ac-title">what is this really</div>
+        <div class="ac-text">It's a party. A proper one. DoCSE doing what DoCSE does when there are no assignments due the next day.</div>
       </div>
       <div class="about-card">
-        <div class="about-num">// 04</div>
-        <div class="about-card-title">The Evening</div>
-        <div class="about-card-text">Lotus Palace, Shreekhandapur — the setting is right. The energy will do the rest. Come ready to have a night worth remembering.</div>
+        <div class="ac-num">04</div>
+        <div class="ac-title">the vibe</div>
+        <div class="ac-text">Lotus Palace. April 30. 4 PM onwards. Food that doesn't taste like canteen food. People you'll actually want to know. Come already.</div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- HIGHLIGHTS -->
-<section class="fade-in">
+<!-- ════════════════════════════════════ HIGHLIGHTS -->
+<div class="section reveal">
   <div class="wrap">
-    <div class="sec-tag">02 · Programme Highlights</div>
-    <h2 class="sec-title">What's on the evening.</h2>
-    <ul class="hl-list">
-      <li class="hl-item">
-        <span class="hl-num">01 —</span>
-        <span class="hl-name">Flash Mob</span>
-        <span class="hl-badge">Live Performance</span>
-      </li>
-      <li class="hl-item">
-        <span class="hl-num">02 —</span>
-        <span class="hl-name">Good Food & Great Vibes</span>
-        <span class="hl-badge">Dining</span>
-      </li>
-      <li class="hl-item">
-        <span class="hl-num">03 —</span>
-        <span class="hl-name">Senior Achievements Night</span>
-        <span class="hl-badge">Ceremony</span>
-      </li>
-      <li class="hl-item">
-        <span class="hl-num">04 —</span>
-        <span class="hl-name">Fresher Welcome</span>
-        <span class="hl-badge">Community</span>
-      </li>
-      <li class="hl-item">
-        <span class="hl-num">05 —</span>
-        <span class="hl-name">More to be announced…</span>
-        <span class="hl-badge">Upcoming</span>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- SCHEDULE -->
-<section class="fade-in">
-  <div class="wrap">
-    <div class="sec-tag">03 · Schedule</div>
-    <h2 class="sec-title">The evening's order.</h2>
-    <p class="sec-body">The detailed programme will be published as confirmations come in. Check back here for updates.</p>
-    <div class="schedule-placeholder">
-      <div class="sch-icon">◻</div>
-      <div class="sch-label">Schedule to be announced</div>
-      <div class="sch-note">Details will be published here as they are confirmed.</div>
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;02_PROGRAMME</span>
+    </div>
+    <h2 class="sec-title">what's actually<br><span class="t-pink">happening.</span></h2>
+    <div class="hl-table">
+      <div class="hl-row">
+        <div class="hl-idx">01</div>
+        <div class="hl-name">Good Food &amp; Great Vibes</div>
+        <div class="hl-badge yellow">DINING</div>
+      </div>
+      <div class="hl-row">
+        <div class="hl-idx">02</div>
+        <div class="hl-name">Live Music &amp; Dance Performance</div>
+        <div class="hl-badge pink">LIVE</div>
+      </div>
+      <div class="hl-row">
+        <div class="hl-idx">03</div>
+        <div class="hl-name">Live DJ Show</div>
+        <div class="hl-badge">DJ SET</div>
+      </div>
+      <div class="hl-row">
+        <div class="hl-idx">04</div>
+        <div class="hl-name">Live Drinks</div>
+        <div class="hl-badge yellow">BAR</div>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- VENUE -->
-<section class="fade-in">
+<!-- ════════════════════════════════════ SCHEDULE -->
+<div class="section reveal">
   <div class="wrap">
-    <div class="sec-tag">04 · Venue</div>
-    <h2 class="sec-title">Where we gather.</h2>
-    <div class="venue-box">
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;03_SCHEDULE</span>
+    </div>
+    <h2 class="sec-title">The evening's<br><span class="t-accent">order.</span></h2>
+    <p class="sec-body">Schedule's getting locked in. Check back — it'll be here before the 24th.</p>
+    <div class="sch-terminal">
+      <div class="sch-topbar">
+        <div class="sch-dot r"></div>
+        <div class="sch-dot y"></div>
+        <div class="sch-dot g"></div>
+        <span class="sch-topbar-title">schedule.sh — bash</span>
+      </div>
+      <div class="sch-body">
+        <div class="sch-prompt"><span class="prompt-sym">$</span> cat schedule.txt</div>
+        <div class="sch-output">
+          &gt; Loading schedule data...<br>
+          &gt; STATUS: Pending confirmation.<br>
+          &gt; Details will be appended here<br>
+          &nbsp; as they are confirmed.
+        </div>
+        <div class="sch-prompt"><span class="prompt-sym">$</span> watch -n 60 ./check_updates.sh</div>
+        <div class="sch-cursor"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ VENUE -->
+<div class="section reveal">
+  <div class="wrap">
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;04_VENUE</span>
+    </div>
+    <h2 class="sec-title">you need to<br><span class="t-accent">be here.</span></h2>
+    <div class="venue-grid">
       <div class="venue-left">
-        <div class="venue-detail">
-          <div class="venue-detail-key">Venue Name</div>
-          <div class="venue-detail-val" style="font-family:'Playfair Display',serif; font-size:20px; color:var(--navy); font-weight:700;">Lotus Palace</div>
-        </div>
-        <div class="venue-detail">
-          <div class="venue-detail-key">Address</div>
-          <div class="venue-detail-val" style="color:var(--dust);">Shreekhandapur, Kathmandu</div>
-        </div>
-        <div class="venue-detail">
-          <div class="venue-detail-key">Event Date</div>
-          <div class="venue-detail-val" style="color:var(--dust);">Thursday, April 24, 2026<br>Baisakh 11, 2083 B.S.</div>
-        </div>
+        <span class="v-key">&gt; VENUE_NAME</span>
+        <div class="v-val big">LOTUS PALACE</div>
+        <span class="v-key">&gt; ADDRESS</span>
+        <div class="v-val">Shreekhandapur, Kathmandu</div>
+        <span class="v-key">&gt; DATE</span>
+        <div class="v-val">Thursday, April 30, 2026<br>Baisakh 17, 2083 B.S.</div>
       </div>
       <div class="venue-right">
-        <div class="venue-tag">Event Time</div>
-        <div class="venue-name" style="font-size:32px;">4:00 PM</div>
-        <div class="venue-addr" style="margin-bottom:20px;">Onwards · Doors open at 4 PM<br>Come early, stay late.</div>
-        <div class="venue-tag">Getting There</div>
-        <div class="venue-addr">Lotus Palace, Shreekhandapur<br>Kathmandu — accessible by<br>private vehicle or taxi.</div>
+        <span class="v-key">&gt; EVENT_TIME</span>
+        <div class="v-val big" style="margin-bottom:20px;">4:00 PM</div>
+        <span class="v-key">&gt; NOTE</span>
+        <div class="v-val">Doors open 4 PM. Come early,<br>the good seats go fast.<br>Grab a taxi or bring your<br>own ride — it's worth it.</div>
       </div>
     </div>
+
+    <div style="margin-top:1px; border:1px solid var(--border); overflow:hidden;">
+      <div style="background:var(--surface); padding:10px 20px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); font-family:'VT323',monospace; font-size:15px; letter-spacing:3px; color:var(--text);">
+        <div class="sch-dot r"></div>
+        <div class="sch-dot y"></div>
+        <div class="sch-dot g"></div>
+        &nbsp; maps.exe — Lotus Palace, Shreekhandapur
+      </div>
+      <div style="position:relative; width:100%; padding-bottom:45%; background:#020508;">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3911.937940372792!2d85.53042860044219!3d27.616968422424513!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb09de0d2ef8c5%3A0x4c58be83fc08aee1!2sLotus%20Event%20and%20Receptions!5e0!3m2!1sen!2snp!4v1776847816927!5m2!1sen!2snp"
+          style="position:absolute; inset:0; width:100%; height:100%; border:0; filter:invert(0.9) hue-rotate(180deg) saturate(0.8);"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+
   </div>
-</section>
+</div>
 
-<!-- REGISTER -->
-<section class="fade-in">
+<!-- ════════════════════════════════════ PRICING -->
+<div class="section reveal">
   <div class="wrap">
-    <div class="sec-tag">05 · Registration</div>
-    <h2 class="sec-title">Secure your seat.</h2>
-    <p class="sec-body">Fill in your details below. All registrations are reviewed by the organising team.</p>
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;05_TICKETS</span>
+    </div>
+    <h2 class="sec-title">grab your<br><span class="t-yellow">ticket.</span></h2>
+    <p class="sec-body">Two tiers. Same party. Get in while the early bird price lasts — once it's gone, it's gone.</p>
 
-    <div class="reg-box">
+    <div class="pricing-grid" id="pricingDisplay">
+      <!-- injected by JS based on TICKET_MODE -->
+    </div>
+
+    <div class="pricing-note" id="pricingNote"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ REGISTRATION -->
+<div class="section reveal">
+  <div class="wrap">
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;06_REGISTER</span>
+    </div>
+    <h2 class="sec-title">lock in<br><span class="t-pink">your spot.</span></h2>
+    <p class="sec-body">Fill this in, pay the fee, done. We'll handle the rest.</p>
+
+    <div class="reg-terminal">
       <div class="reg-topbar">
-        <div class="reg-dot"></div>
-        <div class="reg-dot yellow"></div>
-        <div class="reg-dot green"></div>
-        &nbsp; Registration — DoCSE AfterParty 2026
+        <div class="sch-dot r"></div>
+        <div class="sch-dot y"></div>
+        <div class="sch-dot g"></div>
+        <span class="reg-topbar-title">&nbsp;register.sh — DoCSE AfterParty 2026</span>
       </div>
 
       <div id="formBody">
         <div class="reg-form">
           <div class="form-row">
             <div class="fgroup">
-              <label class="flabel">Full Name *</label>
+              <label class="flabel">&gt; full_name <span class="req">*</span></label>
               <input type="text" id="f_name" class="finput" placeholder="Your full name">
             </div>
             <div class="fgroup">
-              <label class="flabel">Roll Number</label>
+              <label class="flabel">&gt; roll_number</label>
               <input type="text" id="f_roll" class="finput" placeholder="e.g. 23000xx">
             </div>
           </div>
           <div class="form-row">
             <div class="fgroup">
-              <label class="flabel">Email Address *</label>
+              <label class="flabel">&gt; email_addr <span class="req">*</span></label>
               <input type="email" id="f_email" class="finput" placeholder="your@email.com">
             </div>
             <div class="fgroup">
-              <label class="flabel">Phone Number</label>
+              <label class="flabel">&gt; phone_num</label>
               <input type="tel" id="f_phone" class="finput" placeholder="+977 98XXXXXXXX">
             </div>
           </div>
           <div class="form-row">
             <div class="fgroup">
-              <label class="flabel">Batch / Year</label>
+              <label class="flabel">&gt; batch_year</label>
               <select id="f_batch" class="fselect">
-                <option value="">— Select your batch</option>
+                <option value="">-- select_batch</option>
                 <option>Freshers — 2025 Intake</option>
                 <option>2024 Batch</option>
                 <option>2023 Batch</option>
@@ -1243,9 +1837,9 @@ footer {
               </select>
             </div>
             <div class="fgroup">
-              <label class="flabel">Programme</label>
+              <label class="flabel">&gt; programme</label>
               <select id="f_prog" class="fselect">
-                <option value="">— Select programme</option>
+                <option value="">-- select_programme</option>
                 <option>B.E. Computer Engineering</option>
                 <option>B.Sc. Computer Science</option>
                 <option>Other</option>
@@ -1254,9 +1848,9 @@ footer {
           </div>
           <div class="form-row single">
             <div class="fgroup">
-              <label class="flabel">Dietary Preference (optional)</label>
+              <label class="flabel">&gt; dietary_pref</label>
               <select id="f_diet" class="fselect">
-                <option value="No preference">No preference</option>
+                <option value="No preference">no_preference</option>
                 <option>Vegetarian</option>
                 <option>Non-Vegetarian</option>
                 <option>Vegan</option>
@@ -1265,351 +1859,640 @@ footer {
           </div>
         </div>
 
-        <!-- PAYMENT QR -->
+        <!-- QR PAYMENT -->
         <div class="qr-section">
           <div class="qr-header">
-            <div class="reg-dot"></div>
-            &nbsp; Payment — Scan to Pay
+            <span style="color:var(--cyan);">&#9632;</span>
+            &nbsp;&gt; PAYMENT — SCAN_TO_PAY
           </div>
           <div class="qr-body">
             <div class="qr-left">
               <div class="qr-title">eSewa / Mobile Banking</div>
-              <div class="qr-desc">
-                Scan the QR code to pay the registration fee via eSewa, Khalti, or any Nepali mobile banking app.
-                After payment, enter your transaction ID below as confirmation.
+              <div class="qr-desc">Scan to pay via eSewa, Khalti, or mobile banking. Once you're done, drop the transaction ID below. We'll verify it manually — no bots, real humans.</div>
+              <div class="fgroup">
+                <label class="flabel">&gt; txn_id <span class="req">*</span></label>
+                <input type="text" id="f_txn" class="finput" placeholder="TXN-XXXXXXXX">
               </div>
-              <div class="fgroup" style="margin-top:18px;">
-                <label class="flabel">Transaction ID / Reference *</label>
-                <input type="text" id="f_txn" class="finput" placeholder="e.g. TXN-XXXXXXXX">
-              </div>
-              <div style="font-size:9px; color:var(--dust); margin-top:8px; letter-spacing:1px;">
-                Your registration is confirmed once payment is verified by the team.
+              <div style="font-family:'VT323',monospace; font-size:14px; color:var(--text); margin-top:8px; letter-spacing:1px;">
+                &gt; Payment verified manually by organising team.
               </div>
             </div>
             <div class="qr-right">
-              <!-- ─── QR PLACEHOLDER ────────────────────────────────────────
+              <!-- ─ QR PLACEHOLDER ──────────────────────────────────
                    TO ADD YOUR QR:
-                   1. Save your eSewa/bank QR image as  qr.png  in the same
-                      folder as index.html
-                   2. Replace the <div class="qr-placeholder"> block below with:
+                   1. Save eSewa/bank QR image as qr.png in same folder
+                   2. Replace the <div class="qr-placeholder"> block with:
                       <img src="qr.png" alt="Payment QR" class="qr-img">
-                   See guide.md for full instructions.
-              ──────────────────────────────────────────────────────────── -->
+              ─────────────────────────────────────────────────── -->
               <div class="qr-placeholder" id="qrSlot">
                 <div class="qr-ph-inner">
-                  <div class="qr-ph-icon">▦</div>
-                  <div class="qr-ph-label">QR Code</div>
-                  <div class="qr-ph-sub">eSewa · Khalti · mBanking</div>
+                  <span class="qr-ph-icon">▦</span>
+                  <span class="qr-ph-label">QR_CODE</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- CHECKERS -->
+        <div style="padding: 0 36px; display:flex; flex-direction:column; gap:14px; margin-bottom:4px;">
+          <label class="checker-row" id="label_tnc">
+            <input type="checkbox" id="chk_tnc" onchange="updateSubmitState()">
+            <span class="checker-box" id="box_tnc"></span>
+            <span class="checker-text">
+              I've read and agree to the <span class="checker-link" onclick="openTnc(event)">Terms & Conditions</span> — I know what I signed up for.
+            </span>
+          </label>
+          <label class="checker-row" id="label_pay">
+            <input type="checkbox" id="chk_pay" onchange="updateSubmitState()">
+            <span class="checker-box" id="box_pay"></span>
+            <span class="checker-text">
+              I've made the payment and the transaction ID I entered above is correct. I understand payments are <span style="color:var(--yellow);">non-refundable</span> once verified.
+            </span>
+          </label>
+        </div>
+
         <div class="reg-actions">
           <div class="reg-note">
-            * Required fields<br>
-            Registrations reviewed by organising team.
+            &gt; * required fields<br>
+            &gt; paying: <span id="regPriceTag" style="color:var(--cyan); font-weight:700;">—</span>
           </div>
-          <button class="btn-reg" id="submitBtn" onclick="submitForm()">Register Now →</button>
+          <button class="btn-reg" id="submitBtn" onclick="submitForm()" disabled>
+            ./register.sh →
+          </button>
         </div>
       </div>
 
       <div class="success-panel" id="successPanel">
-        <div class="success-orn">✦</div>
-        <div class="success-title">You're on the list.</div>
+        <span class="success-icon">[ ✓ ]</span>
+        <div class="success-title">you're in.</div>
         <p class="success-body">
-          Registration confirmed.<br>
-          See you on April 24th at Lotus Palace.
+          &gt; Registration saved. We got you.<br>
+          &gt; April 30, Lotus Palace. Don't be late.<br>
+          &gt; Tell your friends.
         </p>
       </div>
     </div>
 
-    <!-- Countdown -->
-    <div class="countdown-strip">
-      <div class="cd-label">Time until the party begins</div>
+    <!-- COUNTDOWN -->
+    <div class="countdown-wrap">
+      <span class="cd-label">&gt; time_until( AFTERPARTY_2026 )</span>
       <div id="cdDisplay">
         <div class="cd-units">
-          <div class="cd-unit"><span class="cd-num" id="cdDays">--</span><span class="cd-name">Days</span></div>
-          <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-name">Hours</span></div>
-          <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-name">Minutes</span></div>
-          <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-name">Seconds</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdDays">--</span><span class="cd-name">DAYS</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdHours">--</span><span class="cd-name">HRS</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdMins">--</span><span class="cd-name">MIN</span></div>
+          <div class="cd-unit"><span class="cd-num" id="cdSecs">--</span><span class="cd-name">SEC</span></div>
         </div>
       </div>
     </div>
 
-    <!-- Setup notice -->
-    <div class="notice" id="setupNotice">
-      <strong>⚙ Organiser Setup Required:</strong> To save registrations permanently, connect this form to Google Sheets.
-      Open <strong>setup.md</strong> (included in the download) for the 3-step setup. Until then, registrations are saved locally on each device.
+    <div class="setup-notice">
+      <strong>⚙ ORGANISER:</strong> Connect Google Sheets to store registrations permanently.
+      Open <strong>setup.md</strong> for 3-step instructions. Until then, local storage only.
     </div>
   </div>
-</section>
+</div>
 
-<!-- FUNNY NOTICE -->
-<div class="funny-notice-wrap fade-in">
+<!-- ════════════════════════════════════ FUNNY NOTICE -->
+<div class="notice-section reveal">
   <div class="wrap">
-    <div class="notice-board">
-      <div class="notice-board-top">
-        <div class="nb-pin"></div>
-        <div class="nb-pin"></div>
-        Notice Board — From the Organising Committee
+    <div class="alert-box">
+      <div class="alert-header">
+        <span class="alert-icon">!</span>
+        <span class="alert-title">SYSTEM ALERT — ORGANISING COMMITTEE</span>
       </div>
-      <div class="notice-body">
-        <div class="notice-stamp">📌 Official Notice · DoCSE AfterParty 2026</div>
-        <div class="notice-quote">
-          "So many things have to be seen to be experienced."
+      <div class="alert-body">
+        <div class="alert-stamp">// FROM THE DESK OF — DOCSE ORGANISING COMMITTEE</div>
+        <div class="alert-quote">
+          "So many things have to be<br>
+          <span class="aq-accent">seen</span> to be <span class="aq-accent">experienced.</span>"
         </div>
-        <div class="notice-author">— The Organising Committee &nbsp;✦&nbsp; (We mean it. Just come.)</div>
+        <div class="alert-attribution">— us. and we really do mean it. just come.</div>
       </div>
-      <div class="notice-footer-strip">
-        This is a legally non-binding statement. The committee accepts no responsibility for uncontrollable levels of fun.
+      <div class="alert-footer">
+        DISCLAIMER: This is a legally non-binding statement. The committee accepts no responsibility for uncontrollable levels of fun.
       </div>
     </div>
   </div>
 </div>
 
-<!-- VIDEO -->
-<section class="video-section fade-in">
+<!-- ════════════════════════════════════ VIDEO -->
+<div class="section reveal">
   <div class="wrap">
-    <div class="sec-tag">07 · The Vibe</div>
-    <h2 class="sec-title">See it before you feel it.</h2>
-    <p class="sec-body">A glimpse of what's coming. Stay tuned.</p>
-    <div class="video-wrap">
+    <div class="sec-path">
+      <span class="sp-dim">/sys/event/</span><span class="sp-sep">&gt;</span><span class="sp-active">&nbsp;07_VIBE</span>
+    </div>
+    <h2 class="sec-title">See it before<br><span class="t-cyan">you feel it.</span></h2>
+    <div class="video-outer">
       <div class="video-topbar">
-        <div class="reg-dot"></div>
-        <div class="reg-dot yellow"></div>
-        <div class="reg-dot green"></div>
-        &nbsp; DoCSE AfterParty 2026 — Official Video
+        <div class="sch-dot r"></div>
+        <div class="sch-dot y"></div>
+        <div class="sch-dot g"></div>
+        &nbsp; media_player — DoCSE AfterParty 2025
       </div>
-      <div class="video-inner">
-        <!-- ─── VIDEO PLACEHOLDER ─────────────────────────────────────────
-             TO ADD YOUR VIDEO — Option A (YouTube):
-             Replace the div.video-placeholder-el below with:
-             <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-               allowfullscreen></iframe>
-
-             TO ADD YOUR VIDEO — Option B (local MP4 file):
-             Replace the div.video-placeholder-el below with:
-             <video controls>
-               <source src="your-video.mp4" type="video/mp4">
-             </video>
-
-             See guide.md for full step-by-step instructions.
-        ─────────────────────────────────────────────────────────────── -->
-        <div class="video-placeholder-el">
-          <div class="vph-icon">▶</div>
-          <div class="vph-label">Video Coming Soon</div>
-          <div class="vph-sub">
-            The official DoCSE AfterParty 2026 video will be added here.<br>
-            Check back soon.
-          </div>
-        </div>
+      <div style="position:relative; width:100%; padding-bottom:74.69%; background:#020508;">
+        <video
+          controls
+          playsinline
+          preload="metadata"
+          style="position:absolute; inset:0; width:100%; height:100%; display:block;"
+        >
+          <source src="afterparty2025.mp4" type="video/mp4">
+        </video>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- FOOTER -->
+<!-- ════════════════════════════════════ FOOTER -->
 <footer>
   <div class="wrap">
-    <div class="footer-title">DoCSE's AfterParty 2026</div>
-    <div class="footer-dept">Dept. of Computer Science & Engineering · Kathmandu University</div>
+    <div class="footer-logo">DoCSE's AfterParty 2026</div>
     <div class="footer-line"></div>
     <div class="footer-info">
-      April 24, 2026 · Baisakh 11, 2083<br>
-      Lotus Palace, Shreekhandapur, Kathmandu
+      APRIL 30, 2026 · BAISAKH 17, 2083<br>
+      LOTUS PALACE · SHREEKHANDAPUR · KATHMANDU
     </div>
-    <div class="footer-credit">Site by DoCSE Organising Committee — 2026</div>
+    <div class="footer-credit">
+      &gt; SITE BY DOCSE ORGANISING COMMITTEE — 2026
+    </div>
   </div>
 </footer>
 
-<!-- ADMIN PANEL -->
+<!-- ════════════════════════════════════ T&C MODAL -->
+<div id="tncModal">
+  <div class="tnc-box">
+    <div class="tnc-header">
+      <span class="tnc-header-title">&gt; Terms &amp; Conditions — DoCSE AfterParty 2026</span>
+      <button class="tnc-close" onclick="closeTnc()">✕</button>
+    </div>
+    <div class="tnc-progress-wrap">
+      <div class="tnc-progress-bar" id="tncProgress"></div>
+      <span class="tnc-progress-label" id="tncProgressLabel">read to unlock</span>
+    </div>
+    <div class="tnc-body" id="tncBodyEl">
+
+      <div class="tnc-section">
+        <div class="tnc-section-title">Registration</div>
+        <ul>
+          <li>Registration is only confirmed once payment is verified by the organising team.</li>
+          <li>One registration per person. Duplicate entries will be removed without notice.</li>
+          <li>Your roll number and email must be valid — we'll cross-check before the event.</li>
+          <li>The organising team reserves the right to reject any registration at their discretion.</li>
+        </ul>
+      </div>
+
+      <div class="tnc-section">
+        <div class="tnc-section-title">Payment</div>
+        <ul>
+          <li>Pay the exact amount shown — <span class="highlight">Early Bird Rs.350</span> or <span class="highlight">Night Pass Rs.400</span> depending on the current active tier.</li>
+          <li>Send payment to the QR provided on this page only. We are not responsible for payments sent to any other account.</li>
+          <li>Submit your correct transaction ID. A wrong ID delays verification.</li>
+          <li class="highlight">All payments are non-refundable once verified. No exceptions.</li>
+          <li>If your payment is not verified within 48 hours, reach out to the committee directly.</li>
+        </ul>
+      </div>
+
+      <div class="tnc-section">
+        <div class="tnc-section-title">On the Day</div>
+        <ul>
+          <li>Bring a valid ID or your university ID card to the venue.</li>
+          <li>Entry is subject to capacity. Registered attendees get priority — arrive early.</li>
+          <li>The committee reserves the right to refuse entry for any misconduct or violation of venue rules.</li>
+          <li>The event schedule is subject to change. We'll communicate updates through official channels.</li>
+        </ul>
+      </div>
+
+      <div class="tnc-section">
+        <div class="tnc-section-title">Conduct</div>
+        <ul>
+          <li>Respect the venue, the staff, and everyone in attendance.</li>
+          <li>Any form of harassment or disruptive behaviour will result in immediate removal — no refund.</li>
+          <li>The organising team's decisions are final on the night.</li>
+        </ul>
+      </div>
+
+      <div class="tnc-section">
+        <div class="tnc-section-title">Media</div>
+        <ul>
+          <li>Photos and videos may be taken at the event for departmental use.</li>
+          <li>By attending, you consent to potentially appearing in event media shared by DoCSE.</li>
+          <li>If you have concerns, speak to a committee member on the night.</li>
+        </ul>
+      </div>
+
+      <div class="tnc-section">
+        <p style="color:rgba(122,158,188,0.5); font-size:10px; letter-spacing:1px;">
+          Last updated: April 2026 · DoCSE Organising Committee · Kathmandu University
+        </p>
+      </div>
+
+    </div>
+    <div class="tnc-footer">
+      <span class="tnc-timer-msg" id="tncTimerMsg"></span>
+      <button class="btn-admin" onclick="closeTnc()">Close</button>
+      <button class="btn-admin" id="tncAgreeBtn" onclick="acceptTnc()" disabled
+        style="opacity:0.3; cursor:not-allowed; transition: opacity 0.4s, background 0.2s, color 0.2s;">
+        I Agree →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ ADMIN -->
 <div id="adminPanel">
   <div class="admin-box">
     <div class="admin-header">
-      <span>Registrations — DoCSE AfterParty 2026</span>
+      <span>&gt; REGISTRATIONS — DOCSE_AFTERPARTY_2026</span>
       <button class="admin-close" onclick="closeAdmin()">✕</button>
     </div>
     <div id="adminContent"></div>
     <div class="admin-toolbar">
-      <button class="btn-admin" onclick="downloadCSV()">↓ Export CSV</button>
-      <button class="btn-admin" onclick="closeAdmin()">Close</button>
+      <button class="btn-admin" onclick="downloadCSV()">↓ EXPORT_CSV</button>
+      <button class="btn-admin" onclick="closeAdmin()">CLOSE</button>
     </div>
   </div>
 </div>
 
+<!-- ════════════════════════════════════ SCRIPTS -->
 <script>
-/* ─── GOOGLE APPS SCRIPT URL ───────────────────────────────────────────────
-   After following setup.md, replace the placeholder below with your Apps
-   Script web app URL. Leave as empty string to use local storage only.
-───────────────────────────────────────────────────────────────────────── */
-const APPS_SCRIPT_URL = '';   // 'https://script.google.com/macros/s/YOUR_ID_HERE/exec'
+/* ─── MATRIX RAIN ─── */
+(function(){
+  const canvas = document.getElementById('matrix');
+  const ctx    = canvas.getContext('2d');
+  let cols, drops;
+
+  function resize(){
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols  = Math.floor(canvas.width / 18);
+    drops = Array(cols).fill(1);
+  }
+
+  const chars = 'DoCSE2026AFTERPARTY01ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:<>?αβγδεζηθ'.split('');
+
+  function draw(){
+    ctx.fillStyle = 'rgba(4,8,16,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00F5D4';
+    ctx.font = '14px Space Mono, monospace';
+
+    for(let i = 0; i < drops.length; i++){
+      const ch = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(ch, i * 18, drops[i] * 18);
+      if(drops[i] * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  setInterval(draw, 50);
+})();
+
+/* ═══════════════════════════════════════════════════════
+   ─── TICKET CONFIG ───────────────────────────────────
+   TO SWITCH PRICING:
+   Change TICKET_MODE below.
+     'EARLY_BIRD'  →  Rs. 350  (Early Bird)
+     'NIGHT_PASS'  →  Rs. 400  (Night Pass)
+   That's it. Save the file. Done.
+═══════════════════════════════════════════════════════ */
+const TICKET_MODE = 'EARLY_BIRD';  // ← CHANGE THIS TO SWITCH
+
+const TICKETS = {
+  EARLY_BIRD: {
+    id:    'EARLY_BIRD',
+    name:  'Early Bird',
+    price: 350,
+    badge: 'LIVE NOW',
+    badgeClass: '',
+    priceClass: '',
+    desc:  'For the people who actually plan ahead. Same party, same food, same everything — just Rs. 50 cheaper because you got in early. Smart.'
+  },
+  NIGHT_PASS: {
+    id:    'NIGHT_PASS',
+    name:  'Night Pass',
+    price: 400,
+    badge: 'STANDARD',
+    badgeClass: 'pink',
+    priceClass: 'pink-price',
+    desc:  'Full price, full party. No difference at the door — you\'re still getting in, still having a night. Just maybe buy it sooner next time.'
+  }
+};
+
+function renderTicketing() {
+  const active   = TICKETS[TICKET_MODE];
+  const other    = TICKET_MODE === 'EARLY_BIRD' ? TICKETS.NIGHT_PASS : TICKETS.EARLY_BIRD;
+  const grid     = document.getElementById('pricingDisplay');
+  const noteEl   = document.getElementById('pricingNote');
+  const regLabel = document.getElementById('regPriceTag');
+
+  if (!grid) return;
+
+  // Determine which card goes first (active always left)
+  const first  = active;
+  const second = other;
+
+  grid.innerHTML = `
+    <div class="ticket-card active">
+      <div class="ticket-active-label">CURRENT</div>
+      <div class="ticket-badge ${first.badgeClass} live">${first.badge}</div>
+      <div class="ticket-name">${first.name}</div>
+      <div class="ticket-price ${first.priceClass}">Rs.${first.price}</div>
+      <span class="ticket-currency">Nepali Rupees · per person</span>
+      <div class="ticket-desc">${first.desc}</div>
+    </div>
+    <div class="ticket-card inactive">
+      <div class="ticket-badge ${second.badgeClass}">${second.badge}</div>
+      <div class="ticket-name">${second.name}</div>
+      <div class="ticket-price ${second.priceClass}" style="opacity:0.5;">Rs.${second.price}</div>
+      <span class="ticket-currency">Nepali Rupees · per person</span>
+      <div class="ticket-desc">${second.desc}</div>
+    </div>
+  `;
+
+  if (noteEl) {
+    noteEl.innerHTML = TICKET_MODE === 'EARLY_BIRD'
+      ? `&gt; Early Bird pricing active — Rs.350 per ticket. Pay exactly this when scanning the QR.`
+      : `&gt; Standard pricing active — Rs.400 per ticket. Pay exactly this when scanning the QR.`;
+  }
+
+  if (regLabel) {
+    regLabel.textContent = `Rs.${active.price} — ${active.name}`;
+  }
+}
+
+/* ─── BOOT SEQUENCE ─── */
+const APPS_SCRIPT_URL = '';
+
+function runBoot(){
+  const lines = ['b0','b1','b2','b3','b4','b5','b6'];
+  const delays = [0, 350, 750, 1050, 1350, 1700, 2100];
+
+  lines.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('visible');
+    }, delays[i]);
+  });
+
+  setTimeout(() => {
+    const screen = document.getElementById('bootScreen');
+    screen.style.opacity = '0';
+    setTimeout(() => screen.style.display = 'none', 600);
+  }, 2900);
+}
 
 /* ─── LOCAL STORAGE ─── */
 const STORE_KEY = 'docse_party_2026';
+function getRegs(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); } catch { return []; } }
+function saveReg(e){ const r=getRegs(); r.push(e); localStorage.setItem(STORE_KEY,JSON.stringify(r)); }
 
-function getRegs() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
-  catch { return []; }
-}
-
-function saveReg(entry) {
-  const regs = getRegs();
-  regs.push(entry);
-  localStorage.setItem(STORE_KEY, JSON.stringify(regs));
-}
-
-/* ─── COUNTDOWN TIMER ─── */
-function runCountdown() {
-  // April 24 2026, 4:00 PM Nepal Time (UTC+5:45)
-  const target = new Date('2026-04-24T10:15:00Z'); // 4:00 PM NPT = 10:15 UTC
-
-  function tick() {
-    const now  = new Date();
-    const diff = target - now;
-
-    if (diff <= 0) {
+/* ─── COUNTDOWN ─── */
+function runCountdown(){
+  const target = new Date('2026-04-30T10:15:00Z'); // 4:00 PM NPT
+  function tick(){
+    const diff = target - new Date();
+    if(diff <= 0){
       document.getElementById('cdDisplay').innerHTML =
-        '<div class="cd-done">✦ The Party Has Begun ✦</div>';
+        '<div class="cd-done">&gt; PARTY_HAS_BEGUN ✦</div>';
       return;
     }
-
-    const days  = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const mins  = Math.floor((diff % 3600000)  / 60000);
-    const secs  = Math.floor((diff % 60000)    / 1000);
-
-    document.getElementById('cdDays').textContent  = String(days).padStart(2,'0');
-    document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('cdMins').textContent  = String(mins).padStart(2,'0');
-    document.getElementById('cdSecs').textContent  = String(secs).padStart(2,'0');
+    const pad = n => String(Math.floor(n)).padStart(2,'0');
+    document.getElementById('cdDays').textContent  = pad(diff/86400000);
+    document.getElementById('cdHours').textContent = pad((diff%86400000)/3600000);
+    document.getElementById('cdMins').textContent  = pad((diff%3600000)/60000);
+    document.getElementById('cdSecs').textContent  = pad((diff%60000)/1000);
   }
-
   tick();
   setInterval(tick, 1000);
 }
 
-/* ─── FORM SUBMIT ─── */
-async function submitForm() {
-  const name  = document.getElementById('f_name').value.trim();
-  const roll  = document.getElementById('f_roll').value.trim();
-  const email = document.getElementById('f_email').value.trim();
-  const phone = document.getElementById('f_phone').value.trim();
-  const batch = document.getElementById('f_batch').value;
-  const prog  = document.getElementById('f_prog').value;
-  const diet  = document.getElementById('f_diet').value;
-  const txn   = document.getElementById('f_txn').value.trim();
+/* ─── T&C MODAL ─── */
+const TNC_READ_SECONDS = 8; // seconds user must spend reading after scrolling to bottom
+let tncScrolledToBottom = false;
+let tncTimerInterval    = null;
+let tncSecondsLeft      = TNC_READ_SECONDS;
+let tncUnlocked         = false;
 
-  if (!name)  { alert('Please enter your full name.'); return; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid email address.'); return;
+function openTnc(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  document.getElementById('tncModal').classList.add('show');
+
+  // Reset state every time modal opens (unless already unlocked this session)
+  if (!tncUnlocked) {
+    tncScrolledToBottom = false;
+    tncSecondsLeft      = TNC_READ_SECONDS;
+    clearInterval(tncTimerInterval);
+    setProgress(0);
+    setLabel('read to unlock');
+    setTimerMsg('');
+    lockAgreeBtn();
+
+    // Attach scroll listener
+    const body = document.getElementById('tncBodyEl');
+    if (body) {
+      body.scrollTop = 0;
+      body.onscroll  = onTncScroll;
+    }
+  } else {
+    // Already unlocked — show as ready
+    setProgress(100);
+    setLabel('✓ read');
+    setTimerMsg('');
+    unlockAgreeBtn();
   }
-  if (!txn) { alert('Please enter your payment transaction ID.'); return; }
+}
 
-  if (getRegs().find(r => r.email.toLowerCase() === email.toLowerCase())) {
-    alert('This email is already registered. If this is an error, contact the organising team.'); return;
+function onTncScroll() {
+  const body = document.getElementById('tncBodyEl');
+  if (!body) return;
+
+  const scrolled  = body.scrollTop + body.clientHeight;
+  const total     = body.scrollHeight;
+  const pct       = Math.min(100, Math.round((scrolled / total) * 100));
+  const rawProg   = Math.min(100, Math.round((body.scrollTop / (total - body.clientHeight)) * 100));
+
+  // Update scroll progress bar (reflects position in doc, not time)
+  if (!tncScrolledToBottom) {
+    setProgress(rawProg);
+    setLabel(`${rawProg}% read`);
+  }
+
+  // Trigger countdown once user hits the bottom
+  if (!tncScrolledToBottom && scrolled >= total - 10) {
+    tncScrolledToBottom = true;
+    startTncCountdown();
+  }
+}
+
+function startTncCountdown() {
+  setLabel('hold on...');
+  setTimerMsg(`&gt; locking in for ${tncSecondsLeft}s...`);
+  setProgress(100);
+
+  tncTimerInterval = setInterval(() => {
+    tncSecondsLeft--;
+    if (tncSecondsLeft > 0) {
+      setTimerMsg(`&gt; almost there... ${tncSecondsLeft}s`);
+    } else {
+      clearInterval(tncTimerInterval);
+      tncUnlocked = true;
+      setLabel('✓ unlocked');
+      setTimerMsg('');
+      unlockAgreeBtn();
+    }
+  }, 1000);
+}
+
+function setProgress(pct) {
+  document.getElementById('tncProgress').style.setProperty('--prog', pct + '%');
+}
+function setLabel(txt) {
+  const el = document.getElementById('tncProgressLabel');
+  el.textContent = txt;
+  el.classList.toggle('done', txt.startsWith('✓'));
+}
+function setTimerMsg(html) {
+  document.getElementById('tncTimerMsg').innerHTML = html;
+}
+function lockAgreeBtn() {
+  const btn = document.getElementById('tncAgreeBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.3';
+  btn.style.cursor  = 'not-allowed';
+  btn.style.background = '';
+  btn.style.color      = '';
+  btn.style.borderColor = '';
+}
+function unlockAgreeBtn() {
+  const btn = document.getElementById('tncAgreeBtn');
+  btn.disabled = false;
+  btn.style.opacity    = '1';
+  btn.style.cursor     = 'pointer';
+  btn.style.background = 'var(--cyan)';
+  btn.style.color      = 'var(--void)';
+  btn.style.borderColor = 'var(--cyan)';
+}
+
+function closeTnc() {
+  clearInterval(tncTimerInterval);
+  document.getElementById('tncModal').classList.remove('show');
+}
+function acceptTnc() {
+  if (!tncUnlocked) return;
+  document.getElementById('chk_tnc').checked = true;
+  updateSubmitState();
+  closeTnc();
+}
+
+/* ─── SUBMIT STATE ─── */
+function updateSubmitState() {
+  const tnc = document.getElementById('chk_tnc').checked;
+  const pay = document.getElementById('chk_pay').checked;
+  document.getElementById('submitBtn').disabled = !(tnc && pay);
+}
+
+/* ─── FORM ─── */
+async function submitForm(){
+  const g = id => document.getElementById(id).value.trim();
+  const name=g('f_name'), roll=g('f_roll'), email=g('f_email'),
+        phone=g('f_phone'), batch=document.getElementById('f_batch').value,
+        prog=document.getElementById('f_prog').value,
+        diet=document.getElementById('f_diet').value, txn=g('f_txn');
+
+  const activeTicket = TICKETS[TICKET_MODE];
+
+  if(!document.getElementById('chk_tnc').checked) {
+    document.getElementById('label_tnc').classList.add('shake');
+    setTimeout(()=>document.getElementById('label_tnc').classList.remove('shake'), 500);
+    return;
+  }
+  if(!document.getElementById('chk_pay').checked) {
+    document.getElementById('label_pay').classList.add('shake');
+    setTimeout(()=>document.getElementById('label_pay').classList.remove('shake'), 500);
+    return;
+  }
+  if(!name)  { alert('> missing: full name'); return; }
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('> missing: valid email'); return; }
+  if(!txn)   { alert('> missing: transaction ID'); return; }
+  if(getRegs().find(r=>r.email.toLowerCase()===email.toLowerCase())){
+    alert('> already registered with this email. hit up the committee if something\'s wrong.'); return;
   }
 
   const btn = document.getElementById('submitBtn');
-  btn.textContent = 'Registering…';
+  btn.textContent = '> locking you in...';
   btn.disabled = true;
 
-  const entry = { name, roll, email, phone, batch, prog, diet, txn, ts: new Date().toISOString() };
-
+  const entry = {
+    name, roll, email, phone, batch, prog, diet, txn,
+    ticket_tier:  activeTicket.name,
+    ticket_price: activeTicket.price,
+    ts: new Date().toISOString()
+  };
   saveReg(entry);
 
-  if (APPS_SCRIPT_URL) {
+  if(APPS_SCRIPT_URL){
     try {
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
-      });
-    } catch(e) { /* silent */ }
+      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+    } catch(e){}
   }
 
   document.getElementById('formBody').style.display = 'none';
   document.getElementById('successPanel').classList.add('show');
 }
 
-/* ─── ADMIN (Shift + A) ─── */
+/* ─── ADMIN ─── */
 document.addEventListener('keydown', e => {
-  if (e.shiftKey && e.key === 'A') openAdmin();
-  if (e.key === 'Escape') closeAdmin();
+  if(e.shiftKey && e.key==='A') openAdmin();
+  if(e.key==='Escape') { closeAdmin(); closeTnc(); }
 });
 
-function openAdmin() {
-  const regs = getRegs();
-  const panel = document.getElementById('adminPanel');
-  const content = document.getElementById('adminContent');
-
-  if (regs.length === 0) {
-    content.innerHTML = '<div class="admin-empty">No registrations yet.</div>';
+function openAdmin(){
+  const regs=getRegs(), content=document.getElementById('adminContent');
+  if(!regs.length){
+    content.innerHTML='<div class="admin-empty">&gt; NO_REGISTRATIONS_FOUND</div>';
   } else {
-    const rows = regs.map((r, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${r.name}</td>
-        <td>${r.roll || '—'}</td>
-        <td>${r.email}</td>
-        <td>${r.phone || '—'}</td>
-        <td>${r.batch || '—'}</td>
-        <td>${r.prog || '—'}</td>
-        <td>${r.txn || '—'}</td>
-        <td>${new Date(r.ts).toLocaleDateString()}</td>
-      </tr>`).join('');
-
-    content.innerHTML = `
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>#</th><th>Name</th><th>Roll</th><th>Email</th>
-            <th>Phone</th><th>Batch</th><th>Programme</th><th>TXN ID</th><th>Date</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>`;
+    const rows=regs.map((r,i)=>`<tr>
+      <td>${i+1}</td><td>${r.name}</td><td>${r.roll||'—'}</td>
+      <td>${r.email}</td><td>${r.phone||'—'}</td><td>${r.batch||'—'}</td>
+      <td>${r.prog||'—'}</td><td>${r.ticket_tier||'—'}</td><td>Rs.${r.ticket_price||'—'}</td><td>${r.txn||'—'}</td>
+      <td>${new Date(r.ts).toLocaleDateString()}</td>
+    </tr>`).join('');
+    content.innerHTML=`<table class="admin-table">
+      <thead><tr><th>#</th><th>NAME</th><th>ROLL</th><th>EMAIL</th>
+      <th>PHONE</th><th>BATCH</th><th>PROG</th><th>TIER</th><th>PRICE</th><th>TXN</th><th>DATE</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
   }
-
-  panel.classList.add('show');
+  document.getElementById('adminPanel').classList.add('show');
 }
 
-function closeAdmin() {
-  document.getElementById('adminPanel').classList.remove('show');
-}
+function closeAdmin(){ document.getElementById('adminPanel').classList.remove('show'); }
 
-function downloadCSV() {
-  const regs = getRegs();
-  if (!regs.length) { alert('No registrations to export.'); return; }
-  const header = 'Timestamp,Name,Roll Number,Email,Phone,Batch,Programme,Diet,Transaction ID';
-  const rows = regs.map(r =>
-    `"${r.ts}","${r.name}","${r.roll}","${r.email}","${r.phone}","${r.batch}","${r.prog}","${r.diet}","${r.txn}"`
-  );
-  const csv = [header, ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = 'docse_afterparty_2026_registrations.csv';
+function downloadCSV(){
+  const regs=getRegs();
+  if(!regs.length){ alert('> NO_DATA to export'); return; }
+  const hdr='Timestamp,Name,Roll,Email,Phone,Batch,Programme,Diet,Ticket Tier,Price,TXN_ID';
+  const rows=regs.map(r=>`"${r.ts}","${r.name}","${r.roll}","${r.email}","${r.phone}","${r.batch}","${r.prog}","${r.diet}","${r.ticket_tier||''}","${r.ticket_price||''}","${r.txn}"`);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([[hdr,...rows].join('\n')],{type:'text/csv'}));
+  a.download='docse_afterparty_2026_registrations.csv';
   a.click();
 }
 
-/* ─── SCROLL FADE IN ─── */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-  });
-}, { threshold: 0.08 });
+/* ─── SCROLL REVEAL ─── */
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('on'); obs.unobserve(e.target); } });
+},{threshold:0.06});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-/* ─── LOADING ─── */
-window.addEventListener('load', () => {
+/* ─── INIT ─── */
+window.addEventListener('load', ()=>{
+  renderTicketing();
+  runBoot();
   runCountdown();
-  setTimeout(() => {
-    const o = document.getElementById('loadOverlay');
-    o.style.opacity = '0';
-    setTimeout(() => o.style.display = 'none', 400);
-  }, 950);
 });
 </script>
 </body>
